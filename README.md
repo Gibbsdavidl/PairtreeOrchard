@@ -1,2 +1,8 @@
 # PairtreeOrchard
-Grow a pair orchard and make predictions!
+
+## Grow a pairtree orchard and harvest your predictions!
+
+
+Built with generous help from:
+https://github.com/pybind/python_example
+https://github.com/pybind

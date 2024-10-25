@@ -1,0 +1,15 @@
+Metadata-Version: 2.1
+Name: PairtreeOrchard
+Version: 0.0.1
+Summary: Grow an orchard of pairtrees.
+Home-page: https://github.com/gibbsdavidl/PairtreeOrchard
+Author: David L Gibbs
+Author-email: gibbsdavidl@gmail.com
+License: UNKNOWN
+Platform: UNKNOWN
+Requires-Python: >=3.8
+Provides-Extra: test
+License-File: LICENSE
+
+UNKNOWN
+
