@@ -8,4 +8,4 @@ PairtreeOrchard.egg-info/dependency_links.txt
 PairtreeOrchard.egg-info/not-zip-safe
 PairtreeOrchard.egg-info/requires.txt
 PairtreeOrchard.egg-info/top_level.txt
-src/main.cpp
+src/python_bindings.cpp
