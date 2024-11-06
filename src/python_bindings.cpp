@@ -23,7 +23,8 @@ PYBIND11_MODULE(PairtreeOrchard, m) {
       .def_readwrite("variable2", &Node::variable2)
       .def_readwrite("proportion", &Node::proportion)
       .def_readwrite("n_samples", &Node::n_samples)
-      .def_readwrite("value", &Node::value);
+      .def_readwrite("value", &Node::value)
+      .def("Print", &Node::Print);
 
   py::enum_<MaxFeaturesMethod>(m, "MaxFeaturesMethod")
       .value("sqrt_method", MaxFeaturesMethod::sqrt_method)

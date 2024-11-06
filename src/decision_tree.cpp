@@ -20,6 +20,7 @@ void NodeStack::pop(Record &record) {
 
 
 void Node::Print() {
+  std::cout << "~Node~";
   std::cout << "parent id: " << parent_id << std::endl;
   std::cout << "criterion: " << impurity << std::endl;
   std::cout << "n_samples: " << n_samples << std::endl;
