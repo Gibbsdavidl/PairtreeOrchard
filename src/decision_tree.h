@@ -28,17 +28,17 @@ struct NodeStack {
 };
 
 struct Node {
-  int parent_id;
-  int left_child_id;
-  int right_child_id;
-  bool is_left;
-  bool is_leaf;
-  double impurity;
-  int variable1;
-  int variable2; // v1 < v2
+  int parent_id = 123;
+  int left_child_id=234;
+  int right_child_id=345;
+  bool is_left=false;
+  bool is_leaf=false;
+  double impurity=0.0;
+  int variable1=99;
+  int variable2=88; // v1 < v2
   std::vector<int> split_feature;
-  double proportion;  // of v1 < v2 / n_samples
-  int n_samples;
+  double proportion=0.0;  // of v1 < v2 / n_samples
+  int n_samples=0;
   std::vector<int> value;   // what's this for?
 
   void Print();

@@ -13,6 +13,7 @@ namespace py = pybind11;
 
 PYBIND11_MODULE(PairtreeOrchard, m) {
   py::class_<Node>(m, "Node")
+      .def(py::init<>())
       .def_readwrite("parent_id", &Node::parent_id)
       .def_readwrite("left_child_id", &Node::left_child_id)
       .def_readwrite("right_child_id", &Node::right_child_id)
@@ -32,10 +33,11 @@ PYBIND11_MODULE(PairtreeOrchard, m) {
       .value("all_method", MaxFeaturesMethod::all_method);
 
   py::class_<DecisionTree>(m, "DecisionTree")
+      .def(py::init<>())
       .def_readwrite("nodes", &DecisionTree::nodes);
 
   py::class_<DecisionTreeClassifier>(m, "DecisionTreeClassifier")
-      .def(py::init())
+      .def(py::init<>())
       .def_readwrite("tree", &DecisionTreeClassifier::tree_)
       .def("print_tree", &DecisionTreeClassifier::PrintTree)
       .def("add_node", &DecisionTreeClassifier::AddNode);
