@@ -1,5 +1,10 @@
 import PairtreeOrchard as m
 
-assert m.__version__ == "0.0.1"
 
+print("decision tree test 1 - is built")
+
+dt = m.DecisionTree()
+assert dt.is_built == False
+
+print("done.")
 
