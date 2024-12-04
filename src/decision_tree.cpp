@@ -47,6 +47,9 @@ void Node::Print() {
 int DecisionTree::AddNodeToDT(Node node) {
   int node_id = nodes.size();
   nodes.emplace_back(node);
+  if (!is_built) {
+    is_built = true;
+  }
   return node_id;
 }
 
@@ -100,12 +103,12 @@ void DecisionTreeClassifier::PrintTree() { tree_.Print(); }
 
 void DecisionTreeClassifier::AddNode() {
 
-	// Define a distribution
+	  // Define a distribution
     std::uniform_int_distribution<int> distribution(1, 100);
 
     // Define a random node
-	Node current_node;
-	current_node.parent_id = distribution(generator);
+	  Node current_node;
+	  current_node.parent_id = distribution(generator);
     //current_node.impurity = current_record.impurity;
     current_node.is_leaf = 0;
     current_node.is_left = 0;

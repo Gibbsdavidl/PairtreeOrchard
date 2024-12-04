@@ -10,13 +10,13 @@
 enum MaxFeaturesMethod { sqrt_method, log2_method, all_method };
 
 struct Record {
-  int start;
-  int end;
-  int n_samples;
-  int depth;
-  int parent_id;
-  bool is_left;
-  double impurity;
+  int start=0;
+  int end=0;
+  int n_samples=0;
+  int depth=0;
+  int parent_id=0;
+  bool is_left=0;
+  double impurity=0.0;
   std::vector<int> value;
 };
 
@@ -28,14 +28,14 @@ struct NodeStack {
 };
 
 struct Node {
-  int parent_id = 123;
-  int left_child_id=234;
-  int right_child_id=345;
+  int parent_id=0;
+  int left_child_id=0;
+  int right_child_id=0;
   bool is_left=false;
   bool is_leaf=false;
   double impurity=0.0;
-  int variable1=99;
-  int variable2=88; // v1 < v2
+  int variable1=0;
+  int variable2=0; // v1 < v2
   std::vector<int> split_feature;
   double proportion=0.0;  // of v1 < v2 / n_samples
   int n_samples=0;

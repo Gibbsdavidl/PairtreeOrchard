@@ -34,6 +34,8 @@ PYBIND11_MODULE(PairtreeOrchard, m) {
 
   py::class_<DecisionTree>(m, "DecisionTree")
       .def(py::init<>())
+      .def("Print", &DecisionTree::Print)
+      .def("AddNodeToDT", &DecisionTree::AddNodeToDT)
       .def_readwrite("nodes", &DecisionTree::nodes)
       .def_readwrite("is_built", &DecisionTree::is_built);
 
