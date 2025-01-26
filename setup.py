@@ -18,7 +18,9 @@ ext_modules = [
         "PairtreeOrchard",
         ["src/decision_tree.cpp", 
          "src/decision_tree_classifier.cpp",
-         "src/python_bindings.cpp"],
+         "src/python_bindings.cpp",
+         "src/criterion.cpp",
+         "src/splitter.cpp"],
         # Example: passing in the version to the compiled code
         define_macros=[("VERSION_INFO", __version__)],
     ),

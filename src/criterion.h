@@ -5,8 +5,12 @@
 #include <iostream>
 #include <vector>
 
-
 enum ImpurityMeasure { gini, entropy };
+
+struct SampleData {
+  int sample_number;
+  double current_feature_value;
+};
 
 class Criterion {
 
@@ -31,10 +35,12 @@ class Criterion {
   int n_samples_left_;
   int n_samples_right_;
 
-  Criterion(ImpurityMeasure impurity_measure, int n_labels,
-            const std::vector<std::vector<double>> *feature_data,
-            const std::vector<int> *label_data);
+  //Criterion(ImpurityMeasure impurity_measure, int n_labels,
+   //         const std::vector<std::vector<double>> *feature_data,
+    //        const std::vector<int> *label_data);
+
   Criterion() {}
+  
   void SetData(const std::vector<SampleData> *sample_map_ptr);
   void SetNodeLimits(int start, int end);
   void UpdateSplitPos(int new_pos);

@@ -11,8 +11,8 @@ DecisionTreeClassifier::DecisionTreeClassifier() {
     max_depth_ = 6;
     min_samples_split_ = 2;
     min_samples_leaf_ = 1;
-    max_features_ = 2;
-    min_impurity_split_ = 0.0;
+    max_features_ = 10000;
+    min_impurity_split_ = 0.1;
 }
 
 
@@ -38,39 +38,28 @@ void DecisionTreeClassifier::print() {
 }
 
 
-void DecisionTreeClassifier::load_data(
-  const std::vector<int> label_data,
-  const std::vector<std::vector<double>> feature_data) {
+
+void DecisionTreeClassifier::BuildTree(
+              const std::vector<std::vector<double>> feature_data,
+              const std::vector<int> label_data) {
+
     label_data_ = label_data;
     feature_data_ = feature_data;
-    std::cout << "label length: " << label_data_.size() << std::endl;
-} 
 
+    n_samples_ = label_data_.size();
+    n_features_ = feature_data.size();
 
-void DecisionTreeClassifier::add_node() {
+    // assert
+    // length of one row of feature_data must equal n_samples_
 
-	  // Define a distribution
-    std::uniform_int_distribution<int> distribution(1, 100);
+    // assert
+    // labels must be 0s and 1s
 
-    // Define a random node
-	  Node current_node;
-	  current_node.parent_id = distribution(generator);
-    //current_node.impurity = current_record.impurity;
-    current_node.is_leaf = 0;
-    current_node.is_left = 0;
-    current_node.n_samples = distribution(generator);
-    //current_node.split_feature = current_split.feature;
-    current_node.variable1 = distribution(generator);
-    current_node.variable2 = distribution(generator);
+    // check
+    // that labels have both 0s and 1s
 
-    tree_.add_node(current_node);
+    std::cout << "label length: " << n_samples_ << std::endl;
+    std::cout << "features rows: " << n_features_ << std::endl;
+    std::cout << "features cols: " << feature_data_[0].size() << std::endl;
+
 }
-
-  void BuildTree(const std::vector<std::vector<double>> *feature_data_ptr,
-                 const std::vector<int> *label_data_ptr,
-                 const std::vector<int> samples_subset, 
-                 int n_labels,
-                 std::mt19937 *gen_);
-
-  void BuildTree(const std::vector<std::vector<double>> feature_data,
-                 const std::vector<int> label_data);

@@ -51,11 +51,10 @@ PYBIND11_MODULE(PairtreeOrchard, m) {
             py::arg("min_impurity_split"))
       .def_readwrite("tree", &DecisionTreeClassifier::tree_)
       .def("print", &DecisionTreeClassifier::print)
-      .def("load_data", (void (DecisionTreeClassifier::*)(
-                       const std::vector<int>,
-                       const std::vector<std::vector<double>>
-                       )) &DecisionTreeClassifier::load_data)
-      .def("add_node", &DecisionTreeClassifier::add_node);
+      .def("build_tree", (void (DecisionTreeClassifier::*)(
+                          const std::vector<std::vector<double>>,
+                          const std::vector<int>)) &
+                          DecisionTreeClassifier::BuildTree);
 
 
     }

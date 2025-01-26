@@ -8,10 +8,7 @@
 
 #include "criterion.h"
 
-struct SampleData {
-  int sample_number;
-  double current_feature_value;
-};
+
 
 struct Split {
   std::size_t feature;

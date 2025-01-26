@@ -1,9 +1,8 @@
-#include "core/splitter.h"
+#include "splitter.h"
 
 #include <limits>
 #include <vector>
 
-#include "core/utils.h"
 
 Splitter::Splitter(const std::vector<std::vector<double>> *feature_data,
                    const std::vector<int> *label_data, int min_samples_leaf,
@@ -42,7 +41,7 @@ Splitter::Splitter(const std::vector<std::vector<double>> *feature_data,
     }
   }
   criterion_ =
-      Criterion(impurity_measure, n_labels, feature_data_, label_data_);
+      Criterion();
 
   for (std::size_t i = 0; i < n_features_; i++) {
     feature_order_.emplace_back(i);

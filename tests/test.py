@@ -1,5 +1,5 @@
 import PairtreeOrchard as po
-
+import numpy as np
 
 print("decision tree test 1 - is built")
 dt = po.DecisionTree()
@@ -22,11 +22,15 @@ dt.print_tree()
 del dt
 del nd
 
-print("decision tree test 4 - init with param")
-cl = po.DecisionTreeClassifier(1,2,3,4,5.5)
-cl.add_node()
+
+print("decision tree test 4 - build tree 1")
+X = np.random.rand(5, 3)
+Y =  np.random.randint(0, 1, size=5)
+cl = po.DecisionTreeClassifier()
+cl.build_tree(X,Y)
 cl.print()
 del cl
+
 
 print("done.")
 

@@ -2,30 +2,30 @@
 
 #include <vector>
 
-Criterion::Criterion(ImpurityMeasure impurity_measure, int n_labels,
-                     const std::vector<std::vector<double>> *feature_data,
-                     const std::vector<int> *label_data) {
-  impurity_measure_ = impurity_measure;
+// Criterion::Criterion(ImpurityMeasure impurity_measure, int n_labels,
+//                      const std::vector<std::vector<double>> *feature_data,
+//                      const std::vector<int> *label_data) {
+//   impurity_measure_ = impurity_measure;
 
-  switch (impurity_measure_) {
-    case gini: {
-      impurity_fn_ = Criterion::GiniCoefficient;
-      break;
-    }
-    case entropy: {
-      impurity_fn_ = Criterion::Entropy;
-      break;
-    }
-    default: {
-      throw std::invalid_argument("Unknown impurity measure.");
-    }
-  }
+//   switch (impurity_measure_) {
+//     case gini: {
+//       impurity_fn_ = Criterion::GiniCoefficient;
+//       break;
+//     }
+//     case entropy: {
+//       impurity_fn_ = Criterion::Entropy;
+//       break;
+//     }
+//     default: {
+//       throw std::invalid_argument("Unknown impurity measure.");
+//     }
+//   }
 
-  n_labels_ = n_labels;
-  feature_data_ = feature_data;
-  label_data_ = label_data;
-  pos_ = 0;
-}
+//   n_labels_ = n_labels;
+//   feature_data_ = feature_data;
+//   label_data_ = label_data;
+//   pos_ = 0;
+// }
 
 void Criterion::SetNodeLimits(int start, int end) {
   start_ = start;
