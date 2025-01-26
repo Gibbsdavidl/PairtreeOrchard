@@ -9,6 +9,7 @@
 
 enum MaxFeaturesMethod { sqrt_method, log2_method, all_method };
 
+
 struct Record {
   int start=0;
   int end=0;
@@ -20,12 +21,14 @@ struct Record {
   std::vector<int> value;
 };
 
+
 struct NodeStack {
   std::vector<Record> stack;
   void push(Record record);
   void pop(Record &record);
-  bool IsEmpty();
+  bool is_empty();
 };
+
 
 struct Node {
   int parent_id=0;
@@ -41,15 +44,15 @@ struct Node {
   int n_samples=0;
   std::vector<int> value;   // what's this for?
 
-  void Print();
+  void print_node();
 };
 
 
 struct DecisionTree {
   std::vector<Node> nodes;
   bool is_built = false;
-  int AddNodeToDT(Node node);
-  void Print();
+  int add_node(Node node);
+  void print_tree();
   
   //std::vector<int> GetLeafNodes(
   //    const std::vector<std::vector<double>> *feature_data_ptr);
@@ -65,66 +68,6 @@ struct DecisionTree {
   //    const std::vector<std::vector<double>> *feature_data_ptr);
 };
 
-
-
-class DecisionTreeClassifier {
- public:
-
-  DecisionTree tree_;
-  
-  NodeStack stack_;
-  
-  //Splitter splitter_;
-  
-  //ImpurityMeasure impurity_measure_;
-  
-  MaxFeaturesMethod max_features_method_;
-  
-  int min_samples_leaf_;
-  
-  int max_depth_;
-  
-  int min_samples_split_;
-  
-  double min_impurity_split_;
-  
-  std::size_t n_features_;
-  
-  std::size_t max_features_;
-  
-  std::mt19937 *gen_;
-  
-  std::mt19937 generator;
-  
-  std::vector<std::vector<double>> feature_data_;
-  
-  std::vector<int> label_data_;
-
-  DecisionTreeClassifier();
-
-  // DecisionTreeClassifier(//ImpurityMeasure impurity_measure = gini,
-  //                        int max_depth = std::numeric_limits<int>::max(),
-  //                        int min_samples_split = 2, 
-  //                        int min_samples_leaf = 1,
-  //                        int max_features = -1,
-  //                        MaxFeaturesMethod max_features_method = all_method,
-  //                        double min_impurity_split_ = 0.0);
-
-  void PrintTree();
-
-  void AddNode();
-
-  //void BuildTree(const std::vector<std::vector<double>> *feature_data_ptr,
-  //               const std::vector<int> *label_data_ptr,
-  //               const std::vector<int> samples_subset, int n_labels,
-  //               std::mt19937 *gen_);
-
-  //void BuildTree(const std::vector<std::vector<double>> feature_data,
-  //               const std::vector<int> label_data);
-  
-  //std::vector<int> PredictClasses(
-  //    const std::vector<std::vector<double>> *feature_data_ptr);
-};
 
 
 

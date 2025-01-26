@@ -7,6 +7,7 @@
 #include <vector>
 
 #include "decision_tree.h"
+#include "decision_tree_classifier.h"
 //#include "./core/random_forest.h"
 
 namespace py = pybind11;
@@ -25,7 +26,7 @@ PYBIND11_MODULE(PairtreeOrchard, m) {
       .def_readwrite("proportion", &Node::proportion)
       .def_readwrite("n_samples", &Node::n_samples)
       .def_readwrite("value", &Node::value)
-      .def("Print", &Node::Print);
+      .def("Print", &Node::print_node);
 
   py::enum_<MaxFeaturesMethod>(m, "MaxFeaturesMethod")
       .value("sqrt_method", MaxFeaturesMethod::sqrt_method)
@@ -34,35 +35,26 @@ PYBIND11_MODULE(PairtreeOrchard, m) {
 
   py::class_<DecisionTree>(m, "DecisionTree")
       .def(py::init<>())
-      .def("Print", &DecisionTree::Print)
-      .def("AddNodeToDT", &DecisionTree::AddNodeToDT)
+      .def("print_tree", &DecisionTree::print_tree)
+      .def("add_node", &DecisionTree::add_node)
       .def_readwrite("nodes", &DecisionTree::nodes)
       .def_readwrite("is_built", &DecisionTree::is_built);
 
   py::class_<DecisionTreeClassifier>(m, "DecisionTreeClassifier")
       .def(py::init<>())
+      .def(py::init<int, int, int, int, double>(),
+            py::arg("max_depth"),
+            py::arg("min_samples_split"), 
+            py::arg("min_samples_leaf"),
+            py::arg("max_features"),
+            py::arg("min_impurity_split"))
       .def_readwrite("tree", &DecisionTreeClassifier::tree_)
-      .def("print_tree", &DecisionTreeClassifier::PrintTree)
-      .def("add_node", &DecisionTreeClassifier::AddNode);
+      .def("print", &DecisionTreeClassifier::print)
+      .def("load_data", (void (DecisionTreeClassifier::*)(
+                       const std::vector<int>,
+                       const std::vector<std::vector<double>>
+                       )) &DecisionTreeClassifier::load_data)
+      .def("add_node", &DecisionTreeClassifier::add_node);
 
-  // py::class_<DecisionTreeClassifier>(m, "DecisionTreeClassifier")
-  //     .def(//py::init<ImpurityMeasure, 
-  //       int, int, int, int, 
-  //       MaxFeaturesMethod, double>(),
-  //          //py::arg("impurity_measure") = gini,
-  //          py::arg("max_depth") = std::numeric_limits<int>::max(),
-  //          py::arg("min_samples_split") = 2, 
-  //          py::arg("min_samples_leaf") = 1,
-  //          py::arg("max_features") = -1,
-  //          py::arg("max_features_method") = sqrt_method,
-  //          py::arg("min_impurity_split") = 0.0)
-  //     //.def_readwrite("tree", &DecisionTreeClassifier::tree_)
-  //     //.def("build_tree", (void (DecisionTreeClassifier::*)(
-  //     //                       const std::vector<std::vector<double>>,
-  //     //                       const std::vector<int>)) &
-  //     //                       DecisionTreeClassifier::BuildTree)
-  //     .def("print_tree", &DecisionTreeClassifier::PrintTree)
-  //     .def("add_node", &DecisionTreeClassifier::AddNode);
-  //     //.def("predict_classes", &DecisionTreeClassifier::PredictClasses);
 
     }
