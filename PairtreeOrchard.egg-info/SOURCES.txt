@@ -9,4 +9,5 @@ PairtreeOrchard.egg-info/not-zip-safe
 PairtreeOrchard.egg-info/requires.txt
 PairtreeOrchard.egg-info/top_level.txt
 src/decision_tree.cpp
+src/decision_tree_classifier.cpp
 src/python_bindings.cpp

@@ -2,7 +2,7 @@
 from pybind11.setup_helpers import Pybind11Extension, build_ext
 from setuptools import setup
 
-__version__ = "0.0.1"
+__version__ = "0.0.0.1"
 
 # The main interface is through Pybind11Extension.
 # * You can add cxx_std=11/14/17, and then build_ext can be removed.
@@ -16,7 +16,9 @@ __version__ = "0.0.1"
 ext_modules = [
     Pybind11Extension(
         "PairtreeOrchard",
-        ["src/decision_tree.cpp", "src/python_bindings.cpp"],
+        ["src/decision_tree.cpp", 
+         "src/decision_tree_classifier.cpp",
+         "src/python_bindings.cpp"],
         # Example: passing in the version to the compiled code
         define_macros=[("VERSION_INFO", __version__)],
     ),

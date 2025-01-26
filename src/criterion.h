@@ -9,19 +9,24 @@
 enum ImpurityMeasure { gini, entropy };
 
 class Criterion {
+
  public:
   const std::vector<std::vector<double>> *feature_data_;
   const std::vector<int> *label_data_;
+
   ImpurityMeasure impurity_measure_;
   const std::vector<SampleData> *sample_map_ptr_;
   double (*impurity_fn_)(std::vector<int> &, int &, int &);
+  
   int start_;
   int end_;
   int pos_;
   int n_labels_;
+
   std::vector<int> label_freqs_total_;
   std::vector<int> label_freqs_left_;
   std::vector<int> label_freqs_right_;
+
   int n_samples_;
   int n_samples_left_;
   int n_samples_right_;

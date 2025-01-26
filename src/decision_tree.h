@@ -71,4 +71,4 @@ struct DecisionTree {
 
 
 
-#endif // tree builder
+#endif // DECISION_TREE_H_

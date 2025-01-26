@@ -1,4 +1,3 @@
-
 #ifndef DECISION_TREE_CLASSIFIER_H_
 #define DECISION_TREE_CLASSIFIER_H_
 
@@ -6,9 +5,10 @@
 #include <vector>
 #include <random>
 
-
+#include "decision_tree.h"
 
 class DecisionTreeClassifier {
+
  public:
 
   DecisionTree tree_;    // the tree structure
@@ -57,4 +57,4 @@ class DecisionTreeClassifier {
   //    const std::vector<std::vector<double>> *feature_data_ptr);
 };
 
-#endif // DT Classifier
+#endif // DECISION_TREE_CLASSIFIER_H_

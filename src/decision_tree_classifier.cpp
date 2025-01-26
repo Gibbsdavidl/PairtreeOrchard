@@ -1,3 +1,7 @@
+#include "decision_tree_classifier.h"
+
+#include <iostream>
+#include <vector>
 
 
 // DT Classifier definitions

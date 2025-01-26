@@ -3,16 +3,17 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 
+#include "decision_tree.h"
+#include "decision_tree_classifier.h"
+
 #include <iostream>
 #include <vector>
 
-#include "decision_tree.h"
-#include "decision_tree_classifier.h"
-//#include "./core/random_forest.h"
 
 namespace py = pybind11;
 
 PYBIND11_MODULE(PairtreeOrchard, m) {
+
   py::class_<Node>(m, "Node")
       .def(py::init<>())
       .def_readwrite("parent_id", &Node::parent_id)
