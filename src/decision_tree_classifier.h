@@ -14,16 +14,17 @@ class DecisionTreeClassifier {
  public:
 
   DecisionTree tree_;    // the tree structure
-  NodeStack stack_;      //
+  RecordStack stack_;      // stack of records
 
   std::vector<std::vector<double>> feature_data_;
   std::vector<int> label_data_;
   
   Splitter splitter_;  // finds the split
 
-  ImpurityMeasure impurity_measure_;      // calculates the measure
+  InformationMeasure information_measure_;    // what measure to use?
   //MaxFeaturesMethod max_features_method_;   // number of features 
 
+  // parameters related to building the tree
   std::size_t max_features_;  // 
   int min_samples_leaf_;      // when to stop splitting due to few samples
   int max_depth_;             // maximum depth of the tree, when to stop
@@ -34,7 +35,6 @@ class DecisionTreeClassifier {
   std::size_t n_features_;    // number of features present in data
   std::mt19937 *gen_;
   std::mt19937 generator;
-
 
   DecisionTreeClassifier(); // default classifier
 

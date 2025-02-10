@@ -6,12 +6,10 @@
 
 
 // Nodestack definitions
-
-bool NodeStack::is_empty() { return stack.size() == 0; }
-
-void NodeStack::push(Record record) { stack.push_back(record); }
-
-void NodeStack::pop(Record &record) {
+// a stack of records
+bool RecordStack::is_empty() { return stack.size() == 0; }
+void RecordStack::push(Record record) { stack.push_back(record); }
+void RecordStack::pop(Record &record) {
   record = stack.back();
   stack.pop_back();
 }
@@ -23,19 +21,15 @@ void NodeStack::pop(Record &record) {
 void Node::print_node() {
   std::cout << "~Node~\n\n";
   std::cout << "parent id: " << parent_id << std::endl;
-  std::cout << "criterion: " << impurity << std::endl;
-  std::cout << "n_samples: " << n_samples << std::endl;
   std::cout << "is leaf: " << is_leaf << std::endl;
   std::cout << "is left: " << is_left << std::endl;
   if (!is_leaf) {
-    // std::cout << "feature: " << split_feature << std::endl;
-    // std::cout << "threshold: " << threshold << std::endl;
     std::cout << "left child id: " << left_child_id << std::endl;
     std::cout << "right child id: " << right_child_id << std::endl;
   }
-  std::cout << "value: [ ";
-  for (std::size_t i = 0; i < value.size(); i++) {
-    std::cout << value[i] << " ";
+  std::cout << "sample index: [ ";
+  for (std::size_t i = 0; i < record_.index.size(); i++) {
+    std::cout << record_.index[i] << " ";
   }
   std::cout << "]" << std::endl;
 }

@@ -10,19 +10,17 @@
 enum MaxFeaturesMethod { sqrt_method, log2_method, all_method };
 
 
-struct Record {
-  int start=0;
-  int end=0;
-  int n_samples=0;
-  int depth=0;
-  int parent_id=0;
-  bool is_left=0;
-  double impurity=0.0;
-  std::vector<int> value;
+struct Record {         // about the data contained in the node
+  int n_samples=0;      // number of samples in the set
+  double entropy=0.0;   // entropy of this node
+  std::vector<int> index;  // index in to data and labels
+  int variable1=0;
+  int variable2=0; // v1 > v2
+  double prob_v1gtv2=0.0;  // of v1 > v2 / n_samples
 };
 
 
-struct NodeStack {
+struct RecordStack {
   std::vector<Record> stack;
   void push(Record record);
   void pop(Record &record);
@@ -30,29 +28,23 @@ struct NodeStack {
 };
 
 
-struct Node {
+struct Node {       // about the node in the tree
+  int depth=0;          // depth in the tree
   int parent_id=0;
   int left_child_id=0;
   int right_child_id=0;
   bool is_left=false;
   bool is_leaf=false;
-  double impurity=0.0;
-  int variable1=0;
-  int variable2=0; // v1 < v2
-  std::vector<int> split_feature;
-  double proportion=0.0;  // of v1 < v2 / n_samples
-  int n_samples=0;
-  std::vector<int> value;   // what's this for?
-
+  Record record_;
   void print_node();
 };
 
 
 struct DecisionTree {
-  std::vector<Node> nodes;
-  bool is_built = false;
-  int add_node(Node node);
-  void print_tree();
+  std::vector<Node> nodes;  // tree stored as vector of nodes
+  bool is_built = false;    // is the tree constructed yet?
+  int add_node(Node node);  // push a node
+  void print_tree();        // print the tree
   
   //std::vector<int> GetLeafNodes(
   //    const std::vector<std::vector<double>> *feature_data_ptr);

@@ -24,7 +24,7 @@ del nd
 
 
 print("decision tree test 4 - build tree 1")
-X = np.random.rand(5, 3)
+X = np.random.rand(5, 3)  # features are in rows, samples in columns
 Y =  np.random.randint(0, 1, size=5)
 cl = po.DecisionTreeClassifier()
 cl.build_tree(X,Y)

@@ -20,13 +20,6 @@ PYBIND11_MODULE(PairtreeOrchard, m) {
       .def_readwrite("left_child_id", &Node::left_child_id)
       .def_readwrite("right_child_id", &Node::right_child_id)
       .def_readwrite("is_leaf", &Node::is_leaf)
-      //.def_readwrite("impurity", &Node::impurity)
-      .def_readwrite("split_feature", &Node::split_feature)
-      .def_readwrite("variable1", &Node::variable1)
-      .def_readwrite("variable2", &Node::variable2)
-      .def_readwrite("proportion", &Node::proportion)
-      .def_readwrite("n_samples", &Node::n_samples)
-      .def_readwrite("value", &Node::value)
       .def("Print", &Node::print_node);
 
   py::enum_<MaxFeaturesMethod>(m, "MaxFeaturesMethod")

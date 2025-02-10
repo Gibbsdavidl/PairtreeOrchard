@@ -23,6 +23,7 @@ struct Split {
   void Print();
 };
 
+
 class Splitter {
  public:
   static constexpr double kMinSplitDiff_ = 1e-8;
@@ -40,14 +41,16 @@ class Splitter {
   std::vector<SampleData> sample_map_;
   std::size_t n_samples_total_;
   std::size_t n_features_;
+  
   Splitter() {}
+  
   Splitter(const std::vector<std::vector<double>> *feature_data,
            const std::vector<int> *label_data, int min_samples_leaf,
-           ImpurityMeasure impurity_measure, std::size_t max_features,
+           InformationMeasure impurity_measure, std::size_t max_features,
            int n_labels, std::mt19937 *gen,
            const std::vector<int> &samples_subset = {});
-  void ResetSampleRange(int start, int end);
-  void SplitNode(Split &split);
+
+  void SplitNode(); // Split &split
 };
 
 #endif  // SPLITTER_H_

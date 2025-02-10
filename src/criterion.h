@@ -5,7 +5,7 @@
 #include <iostream>
 #include <vector>
 
-enum ImpurityMeasure { gini, entropy };
+enum InformationMeasure { entropy, gini };
 
 struct SampleData {
   int sample_number;
@@ -15,17 +15,13 @@ struct SampleData {
 class Criterion {
 
  public:
+
+  InformationMeasure information_measure_;
   const std::vector<std::vector<double>> *feature_data_;
   const std::vector<int> *label_data_;
 
-  ImpurityMeasure impurity_measure_;
   const std::vector<SampleData> *sample_map_ptr_;
-  double (*impurity_fn_)(std::vector<int> &, int &, int &);
-  
-  int start_;
-  int end_;
-  int pos_;
-  int n_labels_;
+  double (*impurity_fn_)(std::vector<int> &, int &);
 
   std::vector<int> label_freqs_total_;
   std::vector<int> label_freqs_left_;
@@ -35,23 +31,21 @@ class Criterion {
   int n_samples_left_;
   int n_samples_right_;
 
-  //Criterion(ImpurityMeasure impurity_measure, int n_labels,
-   //         const std::vector<std::vector<double>> *feature_data,
-    //        const std::vector<int> *label_data);
+  Criterion(InformationMeasure information_measure, 
+           const std::vector<std::vector<double>> *feature_data,
+           const std::vector<int> *label_data,
+           const std::vector<int> *sample_index);
 
   Criterion() {}
   
-  void SetData(const std::vector<SampleData> *sample_map_ptr);
-  void SetNodeLimits(int start, int end);
+  void SetIndex(const std::vector<SampleData> *sample_map_ptr);
   void UpdateSplitPos(int new_pos);
-  double ImpurityImprovement();
-  double NodeImpurity();
-  void ChildrenImpurities(double &impurity_left, double &impurity_right);
+  double InformationGain();
+  double NodeInformation();
+  void ChildrenInformation(double &impurity_left, double &impurity_right);
   void ResetStats();
-  static double GiniCoefficient(std::vector<int> &label_freqs, int &n_samples,
-                                int &n_labels);
-  static double Entropy(std::vector<int> &label_freqs, int &n_samples,
-                        int &n_labels);
+  static double GiniCoefficient(std::vector<int> &label_freqs, int &n_samples);
+  static double Entropy(std::vector<int> &label_freqs, int &n_samples);
 };
 
 #endif  // CRITERION_H_
