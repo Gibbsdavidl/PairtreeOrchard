@@ -14,12 +14,14 @@ class DecisionTreeClassifier {
  public:
 
   DecisionTree tree_;    // the tree structure
-  RecordStack stack_;      // stack of records
+  NodeStack stack_;      // stack of nodes
 
   std::vector<std::vector<double>> feature_data_;
   std::vector<int> label_data_;
   
-  Splitter splitter_;  // finds the split
+  // if you instantiate criterion, you can pass in refs
+  // Splitter splitter_;  // finds the split
+  // Criterion criterion_;  // calculates the criterion
 
   InformationMeasure information_measure_;    // what measure to use?
   //MaxFeaturesMethod max_features_method_;   // number of features 

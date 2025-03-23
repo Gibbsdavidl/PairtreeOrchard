@@ -46,8 +46,8 @@ PYBIND11_MODULE(PairtreeOrchard, m) {
       .def("print", &DecisionTreeClassifier::print)
       .def("build_tree", (void (DecisionTreeClassifier::*)(
                           const std::vector<std::vector<double>>,
-                          const std::vector<int>)) &
-                          DecisionTreeClassifier::BuildTree);
+                          const std::vector<int>)) 
+                          &DecisionTreeClassifier::BuildTree);
 
 
     }

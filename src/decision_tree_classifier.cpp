@@ -35,6 +35,13 @@ DecisionTreeClassifier::DecisionTreeClassifier(
     min_samples_leaf_ = min_samples_leaf;
     max_features_ = max_features;
     min_impurity_split_ = min_impurity_split;  
+    // set splitter params
+    splitter_.set_params(max_depth_,
+        min_samples_split_, 
+        min_samples_leaf_,
+        max_features_,
+        min_impurity_split_
+    );
 }
 
 
@@ -57,6 +64,9 @@ void DecisionTreeClassifier::BuildTree(
     n_samples_ = label_data_.size();
     n_features_ = feature_data.size();
 
+    Criterion criterion_ = Criterion(feature_data, label_data);
+    Splitter splitter_ = Splitter(feature_data, label_data, criterion_);
+
     // assert
     // length of one row of feature_data must equal n_samples_
 
@@ -71,42 +81,67 @@ void DecisionTreeClassifier::BuildTree(
     std::cout << "features cols: " << feature_data_[0].size() << std::endl;
 
     // start with root node
-    Record curr = Record();
-    curr.n_samples=n_samples_;    // number of samples in the set
-    curr.index=createVectorFromIToJ(0, n_samples_);   // index in to data and labels
-    curr.entropy=0.0;       // entropy of this node
-    int variable1=0;        // index into feature rows
-    int variable2=0;        // used for pair comparison v1 > v2
-    double prob_v1gtv2=0.0;  // of v1 > v2 / n_samples
+    Record curr_record = Record();
+    curr_record.n_samples=n_samples_;    // number of samples in the set
+    curr_record.index=createVectorFromIToJ(0, n_samples_);   // index in to data and labels
+    curr_record.entropy=0.0;       // entropy of this node, updated at search_split
+    curr_record.variable1=-1;        // index into feature rows
+    curr_record.variable2=-1;        // used for pair comparison v1 > v2
+    curr_record.prob_v1gtv2=0.0;  // of v1 > v2 / n_samples
+
+    // create root node, contains the root record
+    int node_index = 0;
+    Node parent_node = Node();
+    std::string curr_mode = "root";
+    tree_.create_node(parent_node, curr_record, curr_mode, node_index); 
+    tree_.add_node(parent_node);
 
     //  push current to stack
-    stack_.push(curr);
+    stack_.push(parent_node);
 
-    // create root node
-    Node this_node = Node();
-    this_node.depth=0;          // depth in the tree
-    this_node.parent_id=0;    // index into array of nodes
-    this_node.left_child_id=-1; // index to left child
-    this_node.right_child_id=-1; // index to right child
-    this_node.is_left=false;    // is this node a left child
-    this_node.is_leaf=false;    // is this node a leaf
-    this_node.record_ = curr;   // data in the node
-
-    //    push root node
-    tree_.add_node(this_node);  
-
-    // for pop stack
+    //  pop stack
     while (!stack_.is_empty()) {
-        stack_.pop(curr);
-        std::cout << "popped: " << curr.n_samples << std::endl;
+
+        //    pop current
+        Node curr_node = Node();
+        stack_.pop(curr_node);
+        std::cout << "popped: " << curr_node.record_.n_samples << std::endl;
+
+        // update criterion with curr index
+        splitter_.SetIdx(&curr_node.record_.index);
 
         //    if current criteria says to split
-        //      split node
-  
-    }
-    //
+        if (splitter_.search_split(&curr_node) == false) {
+            //    split node
+            Record l_rec;
+            Record r_rec;   // fills in the records
+            splitter_.split(&curr_node, &l_rec, &r_rec);
 
-    //          L and R pushed to stack
-    //
-    //    else set as leaf.
+            // create root, left, and right nodes
+            Node left = Node();
+            Node right = Node();
+            
+            // add nodes to the tree
+            tree_.create_nodes(&parent_node, &left, &right, l_rec, r_rec);
+
+            //    push L and R to stack
+            stack_.push(left);
+            stack_.push(right);
+
+            tree_.add_node(left);
+            tree_.add_node(right);
+
+            node_index += 2;
+        } else {
+            //    set as leaf
+            // Node leaf_node = Node();
+            // curr_mode = 'leaf';
+            //tree_.create_node(leaf_node, curr_node, curr_mode);
+            // set node to leaf
+            tree_.add_node(curr_node);
+            // make the node a leaf, it shouldn't be split
+
+        }
+    }
+    //    end while
 }

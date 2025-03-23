@@ -5,7 +5,7 @@
 
 
 
-// Nodestack definitions
+// RecordStack definitions
 // a stack of records
 bool RecordStack::is_empty() { return stack.size() == 0; }
 void RecordStack::push(Record record) { stack.push_back(record); }
@@ -15,9 +15,17 @@ void RecordStack::pop(Record &record) {
 }
 
 
+// Nodestack definitions
+// a stack of nodes
+bool NodeStack::is_empty() { return stack.size() == 0; }
+void NodeStack::push(Node node) { stack.push_back(node); }
+void NodeStack::pop(Node &node) {
+  node = stack.back();
+  stack.pop_back();
+}
+
 
 // Node definitions
-
 void Node::print_node() {
   std::cout << "~Node~\n\n";
   std::cout << "parent id: " << parent_id << std::endl;
@@ -37,6 +45,40 @@ void Node::print_node() {
 
 
 // Decision Tree definitions
+void create_node(Node &this_node, Record &record, 
+                  std::string mode, int node_idx) {
+
+  // create root node
+  if (mode == "root") {
+    this_node.depth=0;          // depth in the tree
+    this_node.self_id=node_idx;        // index into array of nodes
+    this_node.parent_id=0;    // index into array of nodes
+    this_node.left_child_id=-1; // index to left child
+    this_node.right_child_id=-1; // index to right child
+    this_node.is_left=false;    // is this node a left child
+    this_node.is_leaf=false;    // is this node a leaf
+    this_node.record_ = record;   // data in the node  
+  } else if (mode == 'leaf') {
+    this_node.depth=0;          // depth in the tree
+    this_node.self_id=node_idx;        // index into array of nodes
+    this_node.parent_id=0;    // index into array of nodes
+    this_node.left_child_id=-1; // index to left child
+    this_node.right_child_id=-1; // index to right child
+    this_node.is_left=false;    // is this node a left child
+    this_node.is_leaf=false;    // is this node a leaf
+    this_node.record_ = record;   // data in the node  
+  }
+
+}
+
+
+void create_nodes(Node* parent, Node* left, Node* right,
+  Record l_rec, Record r_rec) {
+    
+    // create nodes!
+    
+  }
+
 
 // add a node to the DT
 int DecisionTree::add_node(Node node) {

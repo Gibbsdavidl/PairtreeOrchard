@@ -1,0 +1,22 @@
+Metadata-Version: 2.2
+Name: PairtreeOrchard
+Version: 0.0.0.1
+Summary: Grow a Pairtree Orchard!
+Home-page: https://github.com/gibbsdavidl/PairtreeOrchard
+Author: David L Gibbs
+Author-email: David L Gibbs <gibbsdavidl@gmail.com>
+Classifier: Development Status :: 4 - Beta
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Programming Language :: Python :: 3 :: Only
+Classifier: Programming Language :: Python :: 3.7
+Classifier: Programming Language :: Python :: 3.8
+Classifier: Programming Language :: Python :: 3.9
+Classifier: Programming Language :: Python :: 3.10
+Classifier: Programming Language :: Python :: 3.11
+Classifier: Programming Language :: Python :: 3.12
+Classifier: Programming Language :: Python :: 3.13
+Requires-Python: >=3.10
+License-File: LICENSE
+Dynamic: author
+Dynamic: home-page
+Dynamic: requires-python

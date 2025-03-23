@@ -7,7 +7,7 @@
 #include <vector>
 
 #include "criterion.h"
-
+#include "decision_tree.h"
 
 
 struct Split {
@@ -26,31 +26,46 @@ struct Split {
 
 class Splitter {
  public:
-  static constexpr double kMinSplitDiff_ = 1e-8;
-  const std::vector<std::vector<double>> *feature_data_;
-  const std::vector<int> *label_data_;
-  Criterion criterion_;
-  int start_;
-  int end_;
-  int min_samples_leaf_;
-  std::size_t max_features_;
-  std::mt19937 *gen_;
-  std::vector<int> feature_order_;
-  bool shuffle_features_;
 
-  std::vector<SampleData> sample_map_;
+  Criterion& criterion_;
+
+  const std::vector<std::vector<double>>& feature_data_;
+  const std::vector<int>& label_data_;
+  const std::vector<int>* idx_;
+
+
+  static constexpr double kMinSplitDiff_ = 1e-8;
+
+
   std::size_t n_samples_total_;
   std::size_t n_features_;
-  
-  Splitter() {}
-  
-  Splitter(const std::vector<std::vector<double>> *feature_data,
-           const std::vector<int> *label_data, int min_samples_leaf,
-           InformationMeasure impurity_measure, std::size_t max_features,
-           int n_labels, std::mt19937 *gen,
-           const std::vector<int> &samples_subset = {});
 
-  void SplitNode(); // Split &split
+
+  int max_depth_;
+  int min_samples_leaf_;
+  int min_samples_split_;
+  int max_features_;
+  double min_label_entropy_;
+
+  std::mt19937 *gen_;
+  
+  Splitter(const std::vector<std::vector<double>>& feature_data,
+    const std::vector<int>& label_data,
+    Criterion& criterion);
+  
+  void set_params(int max_depth,
+    int min_samples_split, 
+    int min_samples_leaf,
+    int max_features,
+    double min_impurity_split);
+
+  void SetIdx(const std::vector<int>* idx);
+
+  bool search_split(Node* curr);
+
+  void print();
+
+  void split(Node* curr, Record* l_rec, Record* r_rec); // Split &split
 };
 
 #endif  // SPLITTER_H_

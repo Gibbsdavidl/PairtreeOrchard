@@ -1,0 +1,15 @@
+LICENSE
+README.md
+pyproject.toml
+setup.py
+src/criterion.cpp
+src/decision_tree.cpp
+src/decision_tree_classifier.cpp
+src/python_bindings.cpp
+src/splitter.cpp
+src/PairtreeOrchard.egg-info/PKG-INFO
+src/PairtreeOrchard.egg-info/SOURCES.txt
+src/PairtreeOrchard.egg-info/dependency_links.txt
+src/PairtreeOrchard.egg-info/not-zip-safe
+src/PairtreeOrchard.egg-info/top_level.txt
+tests/test.py

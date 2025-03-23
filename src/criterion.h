@@ -16,11 +16,11 @@ class Criterion {
 
  public:
 
-  InformationMeasure information_measure_;
-  const std::vector<std::vector<double>> *feature_data_;
-  const std::vector<int> *label_data_;
+  const std::vector<std::vector<double>>& feature_data_;
+  const std::vector<int>& label_data_;
+  const std::vector<int>* idx_;
 
-  const std::vector<SampleData> *sample_map_ptr_;
+  InformationMeasure information_measure_;
   double (*impurity_fn_)(std::vector<int> &, int &);
 
   std::vector<int> label_freqs_total_;
@@ -31,21 +31,23 @@ class Criterion {
   int n_samples_left_;
   int n_samples_right_;
 
-  Criterion(InformationMeasure information_measure, 
-           const std::vector<std::vector<double>> *feature_data,
-           const std::vector<int> *label_data,
-           const std::vector<int> *sample_index);
+  Criterion(
+    const std::vector<std::vector<double>>& feature_data,
+    const std::vector<int>& label_data);
 
-  Criterion() {}
-  
-  void SetIndex(const std::vector<SampleData> *sample_map_ptr);
-  void UpdateSplitPos(int new_pos);
+  void SetIdx(const std::vector<int>* idx);
+
+  double Entropy();
+
   double InformationGain();
   double NodeInformation();
   void ChildrenInformation(double &impurity_left, double &impurity_right);
-  void ResetStats();
-  static double GiniCoefficient(std::vector<int> &label_freqs, int &n_samples);
-  static double Entropy(std::vector<int> &label_freqs, int &n_samples);
+
+
+  //static double GiniCoefficient(std::vector<int> &label_freqs, int &n_samples);
+  //void SetIndex(const std::vector<SampleData> *sample_map_ptr);
+  //void UpdateSplitPos(int new_pos);
+  //void ResetStats();
 };
 
 #endif  // CRITERION_H_

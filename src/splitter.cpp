@@ -3,22 +3,64 @@
 #include <limits>
 #include <vector>
 
+Splitter::Splitter(
+    const std::vector<std::vector<double>>& feature_data,
+        const std::vector<int>& label_data,
+        Criterion& criterion): 
+        feature_data_(feature_data),  
+        label_data_(label_data),
+        criterion_(criterion) {
+    }
 
-Splitter::Splitter(const std::vector<std::vector<double>> *feature_data,
-                   const std::vector<int> *label_data, 
-                   int min_samples_leaf,
-                   InformationMeasure impurity_measure, std::size_t max_features,
-                   int n_labels, std::mt19937 *gen,
-                   const std::vector<int> &samples_subset) { }
 
-
-void Split::Print() {
-    std::cout << "Impurity left: " << impurity_left << std::endl;
-    std::cout << "Impurity right: " << impurity_right << std::endl;
+void Splitter::print() {
+    std::cout << "Splitter: " << n_samples_total_ << std::endl;
  }
 
+void Splitter::set_params(int max_depth,
+    int min_samples_split, 
+    int min_samples_leaf,
+    int max_features,
+    double min_impurity_split) {
+        max_depth_=max_depth;
+        min_samples_leaf_=min_samples_leaf;
+        max_features_=max_features;
+        n_samples_total_=feature_data_.size();
+        n_features_=feature_data_[0].size();
+    }
 
-void Splitter::SplitNode(  ) { }
+
+void Splitter::SetIdx(const std::vector<int>* idx) {
+    idx_ = idx;
+    criterion_.SetIdx(idx);
+}      
+
+bool Splitter::search_split(Node* curr) {
+    // check if we should split
+    if (curr->record_.n_samples < min_samples_split_) {
+        return false;
+    }
+    if (curr->record_.entropy < kMinSplitDiff_) {
+        return false;
+    }
+    if (curr->depth >= max_depth_) {
+        return false;
+    }
+    // use criterion_ to compare pairs for best split
+
+    // set in curr the best split, which vars are used
+    return true;
+}
+
+
+void Splitter::split(Node* curr, Record* l_rec, Record* r_rec) { 
+
+    // read the curr node
+
+    // and fill in the records for the left and right nodes
+
+    // based on saved split info from search split
+}
 
 
 // Splitter::Splitter(const std::vector<std::vector<double>> *feature_data,
