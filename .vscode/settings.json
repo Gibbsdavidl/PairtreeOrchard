@@ -85,5 +85,5 @@
         "valarray": "cpp",
         "variant": "cpp"
     },
-    "cmake.sourceDirectory": "C:/Users/daveg/VSCode/PairtreeOrchard/trash"
+    "cmake.sourceDirectory": "/home/daveg/Code/PairtreeOrchard/trash"
 }

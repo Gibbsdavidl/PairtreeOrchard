@@ -29,6 +29,7 @@ PYBIND11_MODULE(PairtreeOrchard, m) {
 
   py::class_<DecisionTree>(m, "DecisionTree")
       .def(py::init<>())  // default constructor
+      .def_readwrite("is_built", &DecisionTree::is_built)
       .def("add_node", &DecisionTree::add_node)
       .def("create_node", &DecisionTree::create_node)
       .def("create_nodes", &DecisionTree::create_nodes)
