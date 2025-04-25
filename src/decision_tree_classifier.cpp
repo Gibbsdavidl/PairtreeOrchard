@@ -122,7 +122,7 @@ void DecisionTreeClassifier::BuildTree(
             Node right = Node();
             
             // add nodes to the tree
-            tree_.create_nodes(&parent_node, &left, &right, l_rec, r_rec);
+            tree_.create_nodes(parent_node, left, right, l_rec, r_rec);
 
             //    push L and R to stack
             stack_.push(left);

@@ -42,10 +42,8 @@ void Node::print_node() {
   std::cout << "]" << std::endl;
 }
 
-
-
 // Decision Tree definitions
-void create_node(Node &this_node, Record &record, 
+void DecisionTree::create_node(Node& this_node, Record& record, 
                   std::string mode, int node_idx) {
 
   // create root node
@@ -72,7 +70,7 @@ void create_node(Node &this_node, Record &record,
 }
 
 
-void create_nodes(Node* parent, Node* left, Node* right,
+void DecisionTree::create_nodes(Node& parent, Node& left, Node& right,
   Record l_rec, Record r_rec) {
     
     // create nodes!

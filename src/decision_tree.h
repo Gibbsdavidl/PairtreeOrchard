@@ -55,9 +55,9 @@ struct DecisionTree {
 
   int add_node(Node node);  // push a node
   
-  void create_node(Node &parent, Record record, std::string mode, int node_idx);  // create a node
+  void create_node(Node &parent, Record &record, std::string mode, int node_idx);  // create a node
   
-  void create_nodes(Node* parent, Node* left, Node* right,
+  void create_nodes(Node& parent, Node& left, Node& right,
                     Record l_rec, Record r_rec);  // create left and right children
   void print_tree();        // print the tree
   
