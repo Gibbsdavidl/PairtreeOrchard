@@ -1,7 +1,8 @@
 #include "decision_tree_classifier.h"
-
+#include "splitter.h"
 #include <iostream>
 #include <vector>
+
 
 
 // DT Classifier definitions
@@ -14,35 +15,35 @@ std::vector<int> createVectorFromIToJ(int i, int j) {
     return vec;
 }
 
-// default DT classifier
-DecisionTreeClassifier::DecisionTreeClassifier() {
-    max_depth_ = 6;
-    min_samples_split_ = 2;
-    min_samples_leaf_ = 1;
-    max_features_ = 10000;
-    min_impurity_split_ = 0.1;
-}
+DecisionTreeClassifier::DecisionTreeClassifier(): 
+criterion_(feature_data_, label_data_),  
+splitter_(feature_data_, label_data_, criterion_)  
+{}
 
 
 DecisionTreeClassifier::DecisionTreeClassifier(
-  int max_depth,
-  int min_samples_split,
-  int min_samples_leaf, 
-  int max_features,
-  double min_impurity_split ) {
+    int max_depth,
+    int min_samples_split,
+    int min_samples_leaf,
+    int max_features,
+    double min_impurity_split
+  ): 
+    criterion_(feature_data_, label_data_),  
+    splitter_(feature_data_, label_data_, criterion_)  
+  {
+
     max_depth_ = max_depth;
     min_samples_split_ = min_samples_split;
     min_samples_leaf_ = min_samples_leaf;
     max_features_ = max_features;
     min_impurity_split_ = min_impurity_split;  
-    // set splitter params
+
     splitter_.set_params(max_depth_,
-        min_samples_split_, 
-        min_samples_leaf_,
-        max_features_,
-        min_impurity_split_
-    );
-}
+                         min_samples_split_,
+                         min_samples_leaf_,
+                         max_features_,
+                         min_impurity_split_);
+  }
 
 
 void DecisionTreeClassifier::print() { 
@@ -51,7 +52,6 @@ void DecisionTreeClassifier::print() {
   std::cout << "Decision Tree:" << std::endl;
   tree_.print_tree(); 
 }
-
 
 
 void DecisionTreeClassifier::BuildTree(

@@ -58,7 +58,7 @@ void create_node(Node &this_node, Record &record,
     this_node.is_left=false;    // is this node a left child
     this_node.is_leaf=false;    // is this node a leaf
     this_node.record_ = record;   // data in the node  
-  } else if (mode == 'leaf') {
+  } else if (mode == "leaf") {
     this_node.depth=0;          // depth in the tree
     this_node.self_id=node_idx;        // index into array of nodes
     this_node.parent_id=0;    // index into array of nodes

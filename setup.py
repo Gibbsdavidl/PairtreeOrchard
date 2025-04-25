@@ -13,6 +13,19 @@ __version__ = "0.0.0.1"
 #   Sort input source files if you glob sources to ensure bit-for-bit
 #   reproducible builds (https://github.com/pybind/python_example/pull/53)
 
+# ext_modules = [
+#     Pybind11Extension(
+#         "PairtreeOrchard",
+#         ["src/decision_tree.cpp", 
+#          "src/decision_tree_classifier.cpp",
+#          "src/python_bindings.cpp",
+#          "src/criterion.cpp",
+#          "src/splitter.cpp"],
+#         # Example: passing in the version to the compiled code
+#         define_macros=[("VERSION_INFO", __version__)],
+#     ),
+# ]
+
 ext_modules = [
     Pybind11Extension(
         "PairtreeOrchard",
@@ -21,8 +34,9 @@ ext_modules = [
          "src/python_bindings.cpp",
          "src/criterion.cpp",
          "src/splitter.cpp"],
-        # Example: passing in the version to the compiled code
         define_macros=[("VERSION_INFO", __version__)],
+        cxx_std=17,                     # 🚀 Request C++17 here (cleaner)
+        extra_link_args=["-lstdc++"],    # 💥 Add this line to fix your missing symbol
     ),
 ]
 

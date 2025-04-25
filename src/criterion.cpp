@@ -55,6 +55,36 @@ double Criterion::Entropy() {
   return entropy_value;
 }
 
+double Criterion::NodeInformation() {
+  return impurity_fn_(label_freqs_total_, n_samples_);
+  }
+  
+  
+void Criterion::ChildrenInformation(double &impurity_left,
+  double &impurity_right) {
+impurity_left =  impurity_fn_(label_freqs_left_, n_samples_left_);
+impurity_right = impurity_fn_(label_freqs_right_, n_samples_right_);
+}
+
+
+double Criterion::InformationGain() {
+  double entropy_left;
+  double entropy_right;
+
+  ChildrenInformation(entropy_left, entropy_right);
+  // ignore constant terms
+  return (-n_samples_left_ * entropy_left - n_samples_right_ * entropy_right);  //  UPDATE formula!!
+}
+
+// double Criterion::GiniCoefficient(std::vector<int> &label_freqs, int &n_samples) {
+//   double freq_squares = 0.0;
+
+//   for (int i = 0; i < 0; i++) {
+//     freq_squares += label_freqs[i] * label_freqs[i];
+//   }
+//   return 1.0 - freq_squares / (n_samples * n_samples);
+// }
+
 
 // double Criterion::Entropy() {
 //   double entropy = 0.0;
@@ -69,37 +99,6 @@ double Criterion::Entropy() {
 //   }
 //   return entropy;
 // }
-
-
-
-double Criterion::InformationGain() {
-  double entropy_left;
-  double entropy_right;
-
-  ChildrenInformation(entropy_left, entropy_right);
-  // ignore constant terms
-  return (-n_samples_left_ * entropy_left - n_samples_right_ * entropy_right);  //  UPDATE formula!!
-}
-
-double Criterion::GiniCoefficient(std::vector<int> &label_freqs, int &n_samples) {
-  double freq_squares = 0.0;
-
-  for (int i = 0; i < 0; i++) {
-    freq_squares += label_freqs[i] * label_freqs[i];
-  }
-  return 1.0 - freq_squares / (n_samples * n_samples);
-}
-
-
-void Criterion::ChildrenInformation(double &impurity_left,
-                                   double &impurity_right) {
-  impurity_left =  impurity_fn_(label_freqs_left_, n_samples_left_);
-  impurity_right = impurity_fn_(label_freqs_right_, n_samples_right_);
-}
-
-double Criterion::NodeInformation() {
-  return impurity_fn_(label_freqs_total_, n_samples_);
-}
 
 // void Criterion::ResetStats() {
 //   label_freqs_left_.clear();

@@ -39,9 +39,11 @@ class Criterion {
 
   double Entropy();
 
-  double InformationGain();
   double NodeInformation();
+
   void ChildrenInformation(double &impurity_left, double &impurity_right);
+
+  double InformationGain();
 
 
   //static double GiniCoefficient(std::vector<int> &label_freqs, int &n_samples);

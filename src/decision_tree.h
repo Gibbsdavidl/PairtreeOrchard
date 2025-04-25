@@ -10,7 +10,6 @@
 
 enum MaxFeaturesMethod { sqrt_method, log2_method, all_method };
 
-
 struct Record {         // about the data contained in the node
   int n_samples=0;      // number of samples in the set
   double entropy=0.0;   // entropy of this node
@@ -19,22 +18,6 @@ struct Record {         // about the data contained in the node
   int variable2=0; // v1 > v2
   double prob_v1gtv2=0.0;  // of v1 > v2 / n_samples
 };
-
-
-struct RecordStack {
-  std::vector<Record> stack;
-  void push(Record record);
-  void pop(Record &record);
-  bool is_empty();
-};
-
-struct NodeStack {
-  std::vector<Node> stack;
-  void push(Node record);
-  void pop(Node &record);
-  bool is_empty();
-};
-
 
 
 struct Node {       // about the node in the tree
@@ -50,11 +33,30 @@ struct Node {       // about the node in the tree
 };
 
 
+struct NodeStack {
+  std::vector<Node> stack;
+  void push(Node record);
+  void pop(Node &record);
+  bool is_empty();
+};
+
+
+struct RecordStack {
+  std::vector<Record> stack;
+  void push(Record record);
+  void pop(Record &record);
+  bool is_empty();
+};
+
+
 struct DecisionTree {
   std::vector<Node> nodes;  // tree stored as vector of nodes
   bool is_built = false;    // is the tree constructed yet?
+
   int add_node(Node node);  // push a node
+  
   void create_node(Node &parent, Record record, std::string mode, int node_idx);  // create a node
+  
   void create_nodes(Node* parent, Node* left, Node* right,
                     Record l_rec, Record r_rec);  // create left and right children
   void print_tree();        // print the tree

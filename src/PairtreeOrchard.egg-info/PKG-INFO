@@ -1,4 +1,4 @@
-Metadata-Version: 2.2
+Metadata-Version: 2.4
 Name: PairtreeOrchard
 Version: 0.0.0.1
 Summary: Grow a Pairtree Orchard!
@@ -19,4 +19,5 @@ Requires-Python: >=3.10
 License-File: LICENSE
 Dynamic: author
 Dynamic: home-page
+Dynamic: license-file
 Dynamic: requires-python
