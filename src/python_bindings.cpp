@@ -28,6 +28,7 @@ PYBIND11_MODULE(PairtreeOrchard, m) {
       .value("all_method", MaxFeaturesMethod::all_method);
 
   py::class_<DecisionTree>(m, "DecisionTree")
+      .def_readwrite("nodes", &DecisionTree::nodes)
       .def(py::init<>())  // default constructor
       .def_readwrite("is_built", &DecisionTree::is_built)
       .def("add_node", &DecisionTree::add_node)
