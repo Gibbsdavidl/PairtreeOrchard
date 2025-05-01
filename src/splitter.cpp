@@ -47,7 +47,7 @@ bool Splitter::searchSplit(Node* curr) {
     // use criterion_ to compare pairs for best split
 
     // set in curr the best split, which vars are used
-    return true;
+    return false;
 }
 
 

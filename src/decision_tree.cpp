@@ -10,7 +10,8 @@
 bool RecordStack::isEmpty() { return stack_.size() == 0; }
 void RecordStack::push(Record record) { stack_.push_back(record); }
 void RecordStack::pop(Record &record) {
-  record = stack_.back();
+  if (stack_.empty()) throw std::runtime_error("Empty record stack");
+  record = std::move(stack_.back());
   stack_.pop_back();
 }
 
@@ -20,7 +21,8 @@ void RecordStack::pop(Record &record) {
 bool NodeStack::isEmpty() { return stack_.size() == 0; }
 void NodeStack::push(Node node) { stack_.push_back(node); }
 void NodeStack::pop(Node &node) {
-  node = stack_.back();
+  if (stack_.empty()) throw std::runtime_error("Empty node stack");
+  node = std::move(stack_.back());
   stack_.pop_back();
 }
 

@@ -108,13 +108,21 @@ void DecisionTreeClassifier::buildTree(
     //  push current to stack
     stack_.push(parent_node);
 
+    int node_counter = 0;
+    int max_nodes = 10000; // sanity limit
+
     //  while there's still something on the stack
-    while (!stack_.isEmpty()) {
+    while (!stack_.isEmpty() && node_counter < max_nodes) {
+  
+        node_counter++;
+
+        std::cout << "stack size: " << stack_.stack_.size() << std::endl;
 
         //    pop to current
         Node curr_node = Node();
         stack_.pop(curr_node);
-        std::cout << "popped: " << curr_node.record_.n_samples_ << std::endl;
+
+        std::cout << "popped, n_samples: " << curr_node.record_.n_samples_ << std::endl;
 
         // create a splitter object
         Splitter splitter_ = Splitter(feature_data, label_data, 
@@ -126,7 +134,7 @@ void DecisionTreeClassifier::buildTree(
                             min_impurity_split_);
 
         //    if current criteria says to split
-        if (splitter_.searchSplit(&curr_node) == false) {
+        if (splitter_.searchSplit(&curr_node) == true) {
             //    split node
             Record l_rec;
             Record r_rec;   // fills in the records
