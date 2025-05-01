@@ -3,7 +3,7 @@
 #include <unordered_map>
 #include <cmath>
 
-
+// initializing with references to the data
 Criterion::Criterion(
   const std::vector<std::vector<double>>& feature_data,
   const std::vector<int>& label_data): 
@@ -11,7 +11,8 @@ Criterion::Criterion(
     label_data_(label_data) {}
 
   
-void Criterion::SetIdx(const std::vector<int>* idx) {
+void Criterion::setIdx(const std::vector<int>* idx) {
+// setting the sample index for the current question
   idx_ = idx;
 
   n_samples_ = static_cast<int>(idx_->size());
@@ -29,7 +30,7 @@ void Criterion::SetIdx(const std::vector<int>* idx) {
 }
 
 
-double Criterion::Entropy() {
+double Criterion::entropy() {
   if (!idx_ || idx_->empty()) return 0.0;  // Handle empty or uninitialized idx_
 
   std::unordered_map<int, int> label_counts;
@@ -55,23 +56,24 @@ double Criterion::Entropy() {
   return entropy_value;
 }
 
-double Criterion::NodeInformation() {
+
+double Criterion::nodeInformation() {
   return impurity_fn_(label_freqs_total_, n_samples_);
   }
   
   
-void Criterion::ChildrenInformation(double &impurity_left,
+void Criterion::childrenInformation(double &impurity_left,
   double &impurity_right) {
 impurity_left =  impurity_fn_(label_freqs_left_, n_samples_left_);
 impurity_right = impurity_fn_(label_freqs_right_, n_samples_right_);
 }
 
 
-double Criterion::InformationGain() {
+double Criterion::informationGain() {
   double entropy_left;
   double entropy_right;
 
-  ChildrenInformation(entropy_left, entropy_right);
+  childrenInformation(entropy_left, entropy_right);
   // ignore constant terms
   return (-n_samples_left_ * entropy_left - n_samples_right_ * entropy_right);  //  UPDATE formula!!
 }

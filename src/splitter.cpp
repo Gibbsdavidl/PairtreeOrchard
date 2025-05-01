@@ -3,13 +3,16 @@
 #include <limits>
 #include <vector>
 
+
 Splitter::Splitter(
     const std::vector<std::vector<double>>& feature_data,
         const std::vector<int>& label_data,
-        Criterion& criterion): 
+        Criterion& criterion,
+        const std::vector<int>& idx): 
         feature_data_(feature_data),  
         label_data_(label_data),
-        criterion_(criterion) {
+        criterion_(criterion),
+        idx_(idx) {
     }
 
 
@@ -17,7 +20,7 @@ void Splitter::print() {
     std::cout << "Splitter: " << n_samples_total_ << std::endl;
  }
 
-void Splitter::set_params(int max_depth,
+void Splitter::setParams(int max_depth,
     int min_samples_split, 
     int min_samples_leaf,
     int max_features,
@@ -30,20 +33,15 @@ void Splitter::set_params(int max_depth,
     }
 
 
-void Splitter::SetIdx(const std::vector<int>* idx) {
-    idx_ = idx;
-    criterion_.SetIdx(idx);
-}      
-
-bool Splitter::search_split(Node* curr) {
+bool Splitter::searchSplit(Node* curr) {
     // check if we should split
-    if (curr->record_.n_samples < min_samples_split_) {
+    if (curr->record_.n_samples_ < min_samples_split_) {
         return false;
     }
-    if (curr->record_.entropy < kMinSplitDiff_) {
+    if (curr->record_.entropy_ < k_min_split_diff_) {
         return false;
     }
-    if (curr->depth >= max_depth_) {
+    if (curr->depth_ >= max_depth_) {
         return false;
     }
     // use criterion_ to compare pairs for best split

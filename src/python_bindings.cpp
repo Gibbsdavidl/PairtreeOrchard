@@ -16,11 +16,11 @@ PYBIND11_MODULE(PairtreeOrchard, m) {
 
   py::class_<Node>(m, "Node")
       .def(py::init<>())
-      .def_readwrite("parent_id", &Node::parent_id)
-      .def_readwrite("left_child_id", &Node::left_child_id)
-      .def_readwrite("right_child_id", &Node::right_child_id)
-      .def_readwrite("is_leaf", &Node::is_leaf)
-      .def("Print", &Node::print_node);
+      .def_readwrite("parent_id", &Node::parent_id_)
+      .def_readwrite("left_child_id", &Node::left_child_id_)
+      .def_readwrite("right_child_id", &Node::right_child_id_)
+      .def_readwrite("is_leaf", &Node::is_leaf_)
+      .def("print", &Node::printNode);
 
   py::enum_<MaxFeaturesMethod>(m, "MaxFeaturesMethod")
       .value("sqrt_method", MaxFeaturesMethod::sqrt_method)
@@ -28,13 +28,13 @@ PYBIND11_MODULE(PairtreeOrchard, m) {
       .value("all_method", MaxFeaturesMethod::all_method);
 
   py::class_<DecisionTree>(m, "DecisionTree")
-      .def_readwrite("nodes", &DecisionTree::nodes)
+      .def_readwrite("nodes", &DecisionTree::nodes_)
       .def(py::init<>())  // default constructor
-      .def_readwrite("is_built", &DecisionTree::is_built)
-      .def("add_node", &DecisionTree::add_node)
-      .def("create_node", &DecisionTree::create_node)
-      .def("create_nodes", &DecisionTree::create_nodes)
-      .def("print_tree", &DecisionTree::print_tree);
+      .def_readwrite("is_built", &DecisionTree::is_built_)
+      .def("add_node", &DecisionTree::addNode)
+      .def("create_node", &DecisionTree::createNode)
+      .def("create_nodes", &DecisionTree::createNodes)
+      .def("print_tree", &DecisionTree::printTree);
 
   py::class_<DecisionTreeClassifier>(m, "DecisionTreeClassifier")
       .def(py::init<>())
@@ -49,7 +49,7 @@ PYBIND11_MODULE(PairtreeOrchard, m) {
       .def("build_tree", (void (DecisionTreeClassifier::*)(
                           const std::vector<std::vector<double>>,
                           const std::vector<int>)) 
-                          &DecisionTreeClassifier::BuildTree);
+                          &DecisionTreeClassifier::buildTree);
 
 
     }

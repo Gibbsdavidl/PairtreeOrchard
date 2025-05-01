@@ -31,19 +31,20 @@ class Criterion {
   int n_samples_left_;
   int n_samples_right_;
 
+
   Criterion(
     const std::vector<std::vector<double>>& feature_data,
     const std::vector<int>& label_data);
 
-  void SetIdx(const std::vector<int>* idx);
+  void setIdx(const std::vector<int>* idx);
 
-  double Entropy();
+  double entropy();
 
-  double NodeInformation();
+  double nodeInformation();
 
-  void ChildrenInformation(double &impurity_left, double &impurity_right);
+  void childrenInformation(double &impurity_left, double &impurity_right);
 
-  double InformationGain();
+  double informationGain();
 
 
   //static double GiniCoefficient(std::vector<int> &label_freqs, int &n_samples);

@@ -4,9 +4,10 @@
 #include <vector>
 
 
+// DT Classifier definitions //
 
-// DT Classifier definitions
 
+// this is the index covering the samples
 std::vector<int> createVectorFromIToJ(int i, int j) {
     std::vector<int> vec;
     for (int k = i; k <= (j-1); ++k) {
@@ -15,10 +16,16 @@ std::vector<int> createVectorFromIToJ(int i, int j) {
     return vec;
 }
 
-DecisionTreeClassifier::DecisionTreeClassifier(): 
-criterion_(feature_data_, label_data_),  
-splitter_(feature_data_, label_data_, criterion_)  
-{}
+DecisionTreeClassifier::DecisionTreeClassifier() //: 
+// criterion_(feature_data_, label_data_),  
+// splitter_(feature_data_, label_data_, criterion_)  
+{
+  max_features_ = 100;  // 
+  min_samples_leaf_ = 3;      // when to stop splitting due to few samples
+  max_depth_ = 8;             // maximum depth of the tree, when to stop
+  min_samples_split_ = 8;     // number of samples needed to split?
+  min_impurity_split_ = 0.5; // 
+}
 
 
 DecisionTreeClassifier::DecisionTreeClassifier(
@@ -27,22 +34,15 @@ DecisionTreeClassifier::DecisionTreeClassifier(
     int min_samples_leaf,
     int max_features,
     double min_impurity_split
-  ): 
-    criterion_(feature_data_, label_data_),  
-    splitter_(feature_data_, label_data_, criterion_)  
+  ) //: 
+  //   criterion_(feature_data_, label_data_),  
+  //   splitter_(feature_data_, label_data_, criterion_)  
   {
-
     max_depth_ = max_depth;
     min_samples_split_ = min_samples_split;
     min_samples_leaf_ = min_samples_leaf;
     max_features_ = max_features;
     min_impurity_split_ = min_impurity_split;  
-
-    splitter_.set_params(max_depth_,
-                         min_samples_split_,
-                         min_samples_leaf_,
-                         max_features_,
-                         min_impurity_split_);
   }
 
 
@@ -50,22 +50,37 @@ void DecisionTreeClassifier::print() {
   std::cout << "\nDT Classifier" << std::endl;
   std::cout << "Max Depth: " << max_depth_ << std::endl;
   std::cout << "Decision Tree:" << std::endl;
-  tree_.print_tree(); 
+  tree_.printTree(); 
+}
+
+Record DecisionTreeClassifier::initRecord(int n_samples)
+{
+  // start with root node
+    Record curr_record = Record();
+    curr_record.n_samples_=n_samples;    // number of samples in the set
+    curr_record.index_=createVectorFromIToJ(0, n_samples);   // index in to data and labels
+    curr_record.entropy_=0.0;       // entropy of this node, updated at search_split
+    curr_record.variable1_=-1;        // index into feature rows
+    curr_record.variable2_=-1;        // used for pair comparison v1 > v2
+    curr_record.prob_v1gtv2_=0.0;  // of v1 > v2 / n_samples
+    return(curr_record);
 }
 
 
-void DecisionTreeClassifier::BuildTree(
+void DecisionTreeClassifier::buildTree(
               const std::vector<std::vector<double>> feature_data,
               const std::vector<int> label_data) {
 
+    // set the data
     label_data_ = label_data;
     feature_data_ = feature_data;
 
+    // extract information about the data
     n_samples_ = label_data_.size();
     n_features_ = feature_data.size();
 
+    // initialize the building objects with references to data
     Criterion criterion_ = Criterion(feature_data, label_data);
-    Splitter splitter_ = Splitter(feature_data, label_data, criterion_);
 
     // assert
     // length of one row of feature_data must equal n_samples_
@@ -80,38 +95,38 @@ void DecisionTreeClassifier::BuildTree(
     std::cout << "features rows: " << n_features_ << std::endl;
     std::cout << "features cols: " << feature_data_[0].size() << std::endl;
 
-    // start with root node
-    Record curr_record = Record();
-    curr_record.n_samples=n_samples_;    // number of samples in the set
-    curr_record.index=createVectorFromIToJ(0, n_samples_);   // index in to data and labels
-    curr_record.entropy=0.0;       // entropy of this node, updated at search_split
-    curr_record.variable1=-1;        // index into feature rows
-    curr_record.variable2=-1;        // used for pair comparison v1 > v2
-    curr_record.prob_v1gtv2=0.0;  // of v1 > v2 / n_samples
-
     // create root node, contains the root record
-    int node_index = 0;
+    Record curr_record = initRecord(n_samples_);
     Node parent_node = Node();
     std::string curr_mode = "root";
-    tree_.create_node(parent_node, curr_record, curr_mode, node_index); 
-    tree_.add_node(parent_node);
+    int node_index = 0;
+
+    // start growing the tree
+    tree_.createNode(parent_node, curr_record, curr_mode, node_index); 
+    tree_.addNode(parent_node);
 
     //  push current to stack
     stack_.push(parent_node);
 
-    //  pop stack
-    while (!stack_.is_empty()) {
+    //  while there's still something on the stack
+    while (!stack_.isEmpty()) {
 
-        //    pop current
+        //    pop to current
         Node curr_node = Node();
         stack_.pop(curr_node);
-        std::cout << "popped: " << curr_node.record_.n_samples << std::endl;
+        std::cout << "popped: " << curr_node.record_.n_samples_ << std::endl;
 
-        // update criterion with curr index
-        splitter_.SetIdx(&curr_node.record_.index);
+        // create a splitter object
+        Splitter splitter_ = Splitter(feature_data, label_data, 
+                                      criterion_, curr_node.record_.index_);
+        splitter_.setParams(max_depth_, 
+                            min_samples_split_,
+                            min_samples_leaf_,
+                            max_features_,
+                            min_impurity_split_);
 
         //    if current criteria says to split
-        if (splitter_.search_split(&curr_node) == false) {
+        if (splitter_.searchSplit(&curr_node) == false) {
             //    split node
             Record l_rec;
             Record r_rec;   // fills in the records
@@ -122,14 +137,14 @@ void DecisionTreeClassifier::BuildTree(
             Node right = Node();
             
             // add nodes to the tree
-            tree_.create_nodes(parent_node, left, right, l_rec, r_rec);
+            tree_.createNodes(parent_node, left, right, l_rec, r_rec);
 
             //    push L and R to stack
             stack_.push(left);
             stack_.push(right);
 
-            tree_.add_node(left);
-            tree_.add_node(right);
+            tree_.addNode(left);
+            tree_.addNode(right);
 
             node_index += 2;
         } else {
@@ -138,7 +153,7 @@ void DecisionTreeClassifier::BuildTree(
             // curr_mode = 'leaf';
             //tree_.create_node(leaf_node, curr_node, curr_mode);
             // set node to leaf
-            tree_.add_node(curr_node);
+            tree_.addNode(curr_node);
             // make the node a leaf, it shouldn't be split
 
         }

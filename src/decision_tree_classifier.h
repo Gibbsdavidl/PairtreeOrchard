@@ -18,11 +18,6 @@ class DecisionTreeClassifier {
 
   std::vector<std::vector<double>> feature_data_;
   std::vector<int> label_data_;
-  
-  // if you instantiate criterion, you can pass in refs
-  Criterion criterion_;  // calculates the criterion
-  Splitter splitter_;  // finds the split
-
 
   InformationMeasure information_measure_;    // what measure to use?
   //MaxFeaturesMethod max_features_method_;   // number of features 
@@ -37,19 +32,21 @@ class DecisionTreeClassifier {
   std::size_t n_samples_;    // number of features present in data
   std::size_t n_features_;    // number of features present in data
   std::mt19937 *gen_;
-  std::mt19937 generator;
+  std::mt19937 generator_;
 
-  DecisionTreeClassifier();
+  DecisionTreeClassifier();  // default settings
 
   DecisionTreeClassifier(int max_depth,
                          int min_samples_split, 
                          int min_samples_leaf,
                          int max_features,
-                         double min_impurity_split_);
+                         double min_impurity_split);
 
   void print();
 
-  void BuildTree(const std::vector<std::vector<double>> feature_data,
+  Record initRecord(int n_samples);
+
+  void buildTree(const std::vector<std::vector<double>> feature_data,
                  const std::vector<int> label_data);
   
   //std::vector<int> PredictClasses(
