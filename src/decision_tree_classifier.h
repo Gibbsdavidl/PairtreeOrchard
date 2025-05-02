@@ -27,7 +27,7 @@ class DecisionTreeClassifier {
   int min_samples_leaf_;      // when to stop splitting due to few samples
   int max_depth_;             // maximum depth of the tree, when to stop
   int min_samples_split_;     // number of samples needed to split?
-  double min_impurity_split_; // 
+  double min_label_entropy_; // 
 
   std::size_t n_samples_;    // number of features present in data
   std::size_t n_features_;    // number of features present in data
@@ -40,7 +40,7 @@ class DecisionTreeClassifier {
                          int min_samples_split, 
                          int min_samples_leaf,
                          int max_features,
-                         double min_impurity_split);
+                         double min_label_entropy_);
 
   void print();
 

@@ -33,6 +33,8 @@ class Splitter {
   const std::vector<int>& label_data_;
   const std::vector<int>& idx_;
 
+  std::vector<int> vdx_;  // selected variables used in splitting
+
   static constexpr double k_min_split_diff_ = 1e-8;
 
   std::size_t n_samples_total_;
@@ -57,13 +59,17 @@ class Splitter {
     int min_samples_split, 
     int min_samples_leaf,
     int max_features,
-    double min_impurity_split);
+    double min_label_entropy_);
 
-  bool searchSplit(Node* curr);
+  bool searchSplit(Node* curr, std::string split_mode);
 
   void print();
 
   void split(Node* curr, Record* l_rec, Record* r_rec); // Split &split
+
+  bool dt_split(Node* curr);
+
+  bool pt_split(Node* curr);
 };
 
 #endif  // SPLITTER_H_

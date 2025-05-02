@@ -32,19 +32,56 @@ void Splitter::setParams(int max_depth,
         n_features_=feature_data_[0].size();
     }
 
+bool Splitter::dt_split(Node* curr) {
+    int best_feature = -1;
+    double best_threshold = 0.0;
+    double best_score = -100000.0;
 
-bool Splitter::searchSplit(Node* curr) {
-    // check if we should split
+    // for each feature f:
+    //     for each possible split (value or threshold) of f:
+    //         partition data into subsets S1, S2, ...
+    //         compute entropy/information gain (ID3) or gain ratio (C4.5/C5)
+    //         if score > best_score:
+    //             best_score = score
+    //             best_feature = f
+    //             best_threshold = value
+    // return best_feature, best_threshold
+
+
+    return false;
+}
+
+
+bool Splitter::pt_split(Node* curr) {
+    return false;
+}
+
+
+bool Splitter::searchSplit(Node* curr, std::string split_mode) {
+    // check if we should split or whether it's a leaf.
+
+    // IDEA: instead of a paired comparison,
+    // make the pair-partner a threshold T, then
+    // it's like a traditional decision tree?
     if (curr->record_.n_samples_ < min_samples_split_) {
         return false;
     }
-    if (curr->record_.entropy_ < k_min_split_diff_) {
+    if (curr->record_.entropy_ < min_label_entropy_) {
         return false;
     }
     if (curr->depth_ >= max_depth_) {
         return false;
     }
-    // use criterion_ to compare pairs for best split
+    // traditional decision tree, dt
+    if (split_mode == "dt") {
+        // then compare splits to a given threshold
+        return dt_split(curr);
+    }
+
+    if (split_mode == "pt") {
+        // or grow a pairtree
+        return pt_split(curr);
+    }
 
     // set in curr the best split, which vars are used
     return false;

@@ -24,7 +24,7 @@ DecisionTreeClassifier::DecisionTreeClassifier() //:
   min_samples_leaf_ = 3;      // when to stop splitting due to few samples
   max_depth_ = 8;             // maximum depth of the tree, when to stop
   min_samples_split_ = 8;     // number of samples needed to split?
-  min_impurity_split_ = 0.5; // 
+  min_label_entropy_ = 0.5; // 
 }
 
 
@@ -33,7 +33,7 @@ DecisionTreeClassifier::DecisionTreeClassifier(
     int min_samples_split,
     int min_samples_leaf,
     int max_features,
-    double min_impurity_split
+    double min_label_entropy_
   ) //: 
   //   criterion_(feature_data_, label_data_),  
   //   splitter_(feature_data_, label_data_, criterion_)  
@@ -42,7 +42,7 @@ DecisionTreeClassifier::DecisionTreeClassifier(
     min_samples_split_ = min_samples_split;
     min_samples_leaf_ = min_samples_leaf;
     max_features_ = max_features;
-    min_impurity_split_ = min_impurity_split;  
+    min_label_entropy_ = min_label_entropy_;  
   }
 
 
@@ -131,10 +131,10 @@ void DecisionTreeClassifier::buildTree(
                             min_samples_split_,
                             min_samples_leaf_,
                             max_features_,
-                            min_impurity_split_);
+                            min_label_entropy_);
 
         //    if current criteria says to split
-        if (splitter_.searchSplit(&curr_node) == true) {
+        if (splitter_.searchSplit(&curr_node, "dt") == true) {
             //    split node
             Record l_rec;
             Record r_rec;   // fills in the records
