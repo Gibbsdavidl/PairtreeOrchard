@@ -32,13 +32,64 @@ void Splitter::setParams(int max_depth,
         n_features_=feature_data_[0].size();
     }
 
-bool Splitter::dt_split(Node* curr) {
+void Splitter::extract_and_sort_data(
+    int feature_index,
+    std::vector<std::pair<double, int>> paired)
+    //std::vector<double>& sorted_feature_values,
+    //std::vector<int>& sorted_labels)
+{
+    for (int i : idx_) {
+        double feature_val = feature_data_[i][feature_index];
+        int label = label_data_[i];
+        paired.emplace_back(feature_val, label);
+    }
+
+    // Sort the pairs by feature value
+    std::sort(paired.begin(), paired.end(),
+              [](const std::pair<double, int>& a, const std::pair<double, int>& b) {
+                  return a.first < b.first;
+              });
+
+    // // Unpack sorted values and labels into output vectors
+    // sorted_feature_values.clear();
+    // sorted_labels.clear();
+    // for (const auto& p : paired) {
+    //     sorted_feature_values.push_back(p.first);
+    //     sorted_labels.push_back(p.second);
+    // }
+}
+
+bool Splitter::c45_split(Node* curr) {
+
+    std::cout << "in c45 split" << std::endl;
+
     int best_feature = -1;
     double best_threshold = 0.0;
     double best_score = -100000.0;
 
-    // for each feature f:
-    //     for each possible split (value or threshold) of f:
+    std::vector<std::pair<double, int>> paired;  // extracted data and label
+
+    std::vector<int> f_idx(n_features_);       // indices to features
+    std::iota(f_idx.begin(), f_idx.end(), 0);  // Fill with 0, 1, ..., n_features-1
+
+    std::vector<int> s_idx(idx_.size());       // indices to samples
+    std::iota(s_idx.begin(), s_idx.end(), 0);  // Fill with 0, 1, ..., (n_samples in idx)-1
+
+    for (int i : f_idx) {
+        std::cout << "Feature index: " << i << std::endl;
+
+        extract_and_sort_data(i, paired); // now paired has <value, label> for feature i
+
+        // we are going to check splits where the label changes sign.
+        // for each possible split (value or threshold) of f:
+        for (int j : s_idx) {
+
+            std::cout << "feature " << i << " sample " << j << paired[j].first  << "  " << paired[j].second << std::endl;
+
+        }
+    }
+
+
     //         partition data into subsets S1, S2, ...
     //         compute entropy/information gain (ID3) or gain ratio (C4.5/C5)
     //         if score > best_score:
@@ -58,6 +109,9 @@ bool Splitter::pt_split(Node* curr) {
 
 
 bool Splitter::searchSplit(Node* curr, std::string split_mode) {
+
+    std::cout << "in search split" << std::endl;
+
     // check if we should split or whether it's a leaf.
 
     // IDEA: instead of a paired comparison,
@@ -73,9 +127,9 @@ bool Splitter::searchSplit(Node* curr, std::string split_mode) {
         return false;
     }
     // traditional decision tree, dt
-    if (split_mode == "dt") {
+    if (split_mode == "c45") {
         // then compare splits to a given threshold
-        return dt_split(curr);
+        return c45_split(curr);
     }
 
     if (split_mode == "pt") {

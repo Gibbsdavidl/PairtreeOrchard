@@ -134,7 +134,7 @@ void DecisionTreeClassifier::buildTree(
                             min_label_entropy_);
 
         //    if current criteria says to split
-        if (splitter_.searchSplit(&curr_node, "dt") == true) {
+        if (splitter_.searchSplit(&curr_node, "c45") == true) {
             //    split node
             Record l_rec;
             Record r_rec;   // fills in the records

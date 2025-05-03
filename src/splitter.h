@@ -67,7 +67,9 @@ class Splitter {
 
   void split(Node* curr, Record* l_rec, Record* r_rec); // Split &split
 
-  bool dt_split(Node* curr);
+  void extract_and_sort_data(int feature_j, std::vector<std::pair<double, int>> paired);
+
+  bool c45_split(Node* curr);
 
   bool pt_split(Node* curr);
 };
