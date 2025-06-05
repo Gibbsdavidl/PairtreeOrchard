@@ -30,6 +30,20 @@ void Criterion::setIdx(const std::vector<int>* idx) {
 }
 
 
+double entropy(const std::unordered_map<int,int>& freq_map, int total_count) {
+    // H = - sum_{c} (p_c * log2(p_c))
+    if (total_count == 0) return 0.0;
+    double H = 0.0;
+    for (auto & kv : freq_map) {
+        int count = kv.second;
+        if (count == 0) continue;
+        double p = double(count) / double(total_count);
+        H -= p * std::log2(p);
+    }
+    return H;
+}
+
+
 double Criterion::entropy() {
   if (!idx_ || idx_->empty()) return 0.0;  // Handle empty or uninitialized idx_
 

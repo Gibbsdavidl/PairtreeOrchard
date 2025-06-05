@@ -17,6 +17,9 @@ struct Record {         // about the data contained in the node
   int variable1_=0;
   int variable2_=0; // v1 > v2
   double prob_v1gtv2_=0.0;  // of v1 > v2 / n_samples
+  double threshold=0.0;
+  double gain_ratio = 0.0;
+
 };
 
 

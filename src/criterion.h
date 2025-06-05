@@ -38,6 +38,8 @@ class Criterion {
 
   void setIdx(const std::vector<int>* idx);
 
+  double entropy(const std::unordered_map<int,int>&, int);
+
   double entropy();
 
   double nodeInformation();

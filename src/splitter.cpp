@@ -1,4 +1,5 @@
 #include "splitter.h"
+#include "criterion.h"
 
 #include <limits>
 #include <vector>
@@ -35,9 +36,10 @@ void Splitter::setParams(int max_depth,
 void Splitter::extract_and_sort_data(
     int feature_index,
     std::vector<std::pair<double, int>> paired)
-    //std::vector<double>& sorted_feature_values,
-    //std::vector<int>& sorted_labels)
 {
+    // clear out the paired object...
+    paired.clear();
+    // then for each item... create the pair
     for (int i : idx_) {
         double feature_val = feature_data_[i][feature_index];
         int label = label_data_[i];
@@ -50,13 +52,6 @@ void Splitter::extract_and_sort_data(
                   return a.first < b.first;
               });
 
-    // // Unpack sorted values and labels into output vectors
-    // sorted_feature_values.clear();
-    // sorted_labels.clear();
-    // for (const auto& p : paired) {
-    //     sorted_feature_values.push_back(p.first);
-    //     sorted_labels.push_back(p.second);
-    // }
 }
 
 bool Splitter::c45_split(Node* curr) {
@@ -79,7 +74,6 @@ bool Splitter::c45_split(Node* curr) {
         std::cout << "Feature index: " << i << std::endl;
 
         // 1) Build (value,label) pairs for feature i, then sort ascending by value.
-        paired.clear();
         extract_and_sort_data(i, paired);
         // After this call, `paired[j].first` is the j-th smallest feature‐value,
         // and `paired[j].second` is its corresponding class‐label.
@@ -98,7 +92,7 @@ bool Splitter::c45_split(Node* curr) {
             int lab = paired[k].second;
             parent_freq[lab] += 1;
         }
-        double parent_entropy = compute_entropy(parent_freq, N);
+        double parent_entropy = criterion_.entropy(parent_freq, N);
 
         // If parent entropy is zero, that means all labels are identical; not a candidate for splitting
         if (parent_entropy <= 0.0) {
@@ -147,8 +141,8 @@ bool Splitter::c45_split(Node* curr) {
                 continue;
             }
 
-            double H_left  = compute_entropy(left_freq,  N_left);
-            double H_right = compute_entropy(right_freq, N_right);
+            double H_left  = criterion_.entropy(left_freq,  N_left);
+            double H_right = criterion_.entropy(right_freq, N_right);
 
             // --------------------------------------------------------
             // 5) Compute Information Gain:
@@ -189,18 +183,20 @@ bool Splitter::c45_split(Node* curr) {
         }  // end loop over j = [1 … N-1]
 
     }
+    // ---------------------------------------------------------------------
+    // 9) At this point, best_feature and best_threshold hold the overall best split.
+    //    If no valid split was found, best_feature will remain -1.
+    // ---------------------------------------------------------------------
+    if (best_feature < 0) {
+        // No split improved gain‐ratio → do not split this node
+        return false;
+    }
 
-
-    //         partition data into subsets S1, S2, ...
-    //         compute entropy/information gain (ID3) or gain ratio (C4.5/C5)
-    //         if score > best_score:
-    //             best_score = score
-    //             best_feature = f
-    //             best_threshold = value
-    // return best_feature, best_threshold
-
-
-    return false;
+    // Otherwise, attach the best split information to the current node:
+    curr->record_.variable1_ = best_feature;
+    curr->record_.threshold  = best_threshold;
+    curr->record_.gain_ratio = best_score;
+    return true;
 }
 
 
