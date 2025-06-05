@@ -78,15 +78,116 @@ bool Splitter::c45_split(Node* curr) {
     for (int i : f_idx) {
         std::cout << "Feature index: " << i << std::endl;
 
-        extract_and_sort_data(i, paired); // now paired has <value, label> for feature i
+        // 1) Build (value,label) pairs for feature i, then sort ascending by value.
+        paired.clear();
+        extract_and_sort_data(i, paired);
+        // After this call, `paired[j].first` is the j-th smallest feature‐value,
+        // and `paired[j].second` is its corresponding class‐label.
 
-        // we are going to check splits where the label changes sign.
-        // for each possible split (value or threshold) of f:
-        for (int j : s_idx) {
-
-            std::cout << "feature " << i << " sample " << j << paired[j].first  << "  " << paired[j].second << std::endl;
-
+        int N = static_cast<int>(paired.size());
+        if (N < 2) {
+            // Cannot split fewer than 2 samples, so skip.
+            continue;
         }
+
+        // ---------------------------------------------------------------------------
+        // 2) Compute the “parent” entropy H(S) over ALL N samples of this feature.
+        // ---------------------------------------------------------------------------
+        std::unordered_map<int,int> parent_freq;
+        for (int k = 0; k < N; ++k) {
+            int lab = paired[k].second;
+            parent_freq[lab] += 1;
+        }
+        double parent_entropy = compute_entropy(parent_freq, N);
+
+        // If parent entropy is zero, that means all labels are identical; not a candidate for splitting
+        if (parent_entropy <= 0.0) {
+            continue;
+        }
+
+        // --------------------------------------------------------
+        // 3) Scan through adjacent pairs in “paired” to find ALL candidate thresholds.
+        //    Only consider a split BETWEEN two sorted values if their labels differ.
+        // --------------------------------------------------------
+        for (int j = 1; j < N; ++j) {
+
+            // Only consider a threshold if the labels actually change between paired[j-1] and paired[j].
+            if (paired[j-1].second == paired[j].second) {
+                continue;  // same label → no “information boundary” here
+            }
+
+            // Candidate threshold is the midpoint between these two feature‐values:
+            double v_left  = paired[j-1].first;
+            double v_right = paired[j].first;
+            double threshold = 0.5 * (v_left + v_right);
+
+            // ----------------------------------------------------
+            // 4) Partition into left‐subset S_L (value <= threshold)
+            //    and right‐subset S_R (value > threshold), then
+            //    compute entropies H(S_L), H(S_R) and sizes N_L, N_R.
+            // ----------------------------------------------------
+            std::unordered_map<int,int> left_freq, right_freq;
+            int N_left = 0, N_right = 0;
+
+            // Simple loop over ALL N to count how many go left/right
+            for (int k = 0; k < N; ++k) {
+                double feat_val = paired[k].first;
+                int    lab      = paired[k].second;
+                if (feat_val <= threshold) {
+                    left_freq[lab] += 1;
+                    ++N_left;
+                } else {
+                    right_freq[lab] += 1;
+                    ++N_right;
+                }
+            }
+
+            // If either side is empty, skip this threshold (no real split).
+            if (N_left == 0 || N_right == 0) {
+                continue;
+            }
+
+            double H_left  = compute_entropy(left_freq,  N_left);
+            double H_right = compute_entropy(right_freq, N_right);
+
+            // --------------------------------------------------------
+            // 5) Compute Information Gain:
+            //       IG = H(parent) - (N_L/N)*H_left - (N_R/N)*H_right
+            // --------------------------------------------------------
+            double wL = double(N_left) / double(N);
+            double wR = double(N_right) / double(N);
+            double info_gain = parent_entropy - (wL * H_left + wR * H_right);
+
+            // ------------------------------------------------------------------
+            // 6) Compute Split Information:
+            //       SI = - (N_L/N)*log2(N_L/N)  -  (N_R/N)*log2(N_R/N)
+            // ------------------------------------------------------------------
+            double split_info = 0.0;
+            // note: we know N_left>0 and N_right>0, so wL>0, wR>0
+            split_info -= wL * std::log2(wL);
+            split_info -= wR * std::log2(wR);
+
+            // If split‐info is zero (unlikely unless one side empty, but we checked),
+            // then gain ratio is undefined → skip.
+            if (split_info <= 0.0) {
+                continue;
+            }
+
+            // --------------------------------------------------------
+            // 7) Compute Gain Ratio = IG / split_info
+            // --------------------------------------------------------
+            double gain_ratio = info_gain / split_info;
+
+            // --------------------------------------------------------
+            // 8) If this is the best we’ve seen so far, record it.
+            // --------------------------------------------------------
+            if (gain_ratio > best_score) {
+                best_score     = gain_ratio;
+                best_feature   = i;
+                best_threshold = threshold;
+            }
+        }  // end loop over j = [1 … N-1]
+
     }
 
 
