@@ -30,7 +30,7 @@ void Criterion::setIdx(const std::vector<int>* idx) {
 }
 
 
-double entropy(const std::unordered_map<int,int>& freq_map, int total_count) {
+double Criterion::entropy(const std::unordered_map<int,int>& freq_map, int total_count) {
     // H = - sum_{c} (p_c * log2(p_c))
     if (total_count == 0) return 0.0;
     double H = 0.0;

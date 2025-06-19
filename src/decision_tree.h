@@ -10,12 +10,12 @@
 
 enum MaxFeaturesMethod { sqrt_method, log2_method, all_method };
 
-struct Record {         // about the data contained in the node
-  int n_samples_=0;      // number of samples in the set
-  double entropy_=0.0;   // entropy of this node
+struct Record {             // about the data contained in the node
+  int n_samples_=0;         // number of samples in the set
+  double entropy_=0.0;      // entropy of this node
   std::vector<int> index_;  // index in to data and labels
   int variable1_=0;
-  int variable2_=0; // v1 > v2
+  int variable2_=0;         // v1 > v2
   double prob_v1gtv2_=0.0;  // of v1 > v2 / n_samples
   double threshold=0.0;
   double gain_ratio = 0.0;

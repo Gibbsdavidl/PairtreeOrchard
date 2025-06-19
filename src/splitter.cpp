@@ -54,13 +54,31 @@ void Splitter::extract_and_sort_data(
 
 }
 
-bool Splitter::c45_split(Node* curr) {
+
+void Splitter::extract_data(
+    int feature_index,
+    std::vector<std::pair<double, int>> paired)
+{
+    // clear out the paired object...
+    paired.clear();
+    // then for each item... create the pair
+    for (int i : idx_) {
+        double feature_val = feature_data_[i][feature_index];
+        int label = label_data_[i];
+        paired.emplace_back(feature_val, label);
+    }
+
+}
+
+
+bool Splitter::c45_search_split(Node* curr) {
 
     std::cout << "in c45 split" << std::endl;
 
     int best_feature = -1;
     double best_threshold = 0.0;
     double best_score = -100000.0;
+    double parent_entropy = 0.0;
 
     std::vector<std::pair<double, int>> paired;  // extracted data and label
 
@@ -81,6 +99,7 @@ bool Splitter::c45_split(Node* curr) {
         int N = static_cast<int>(paired.size());
         if (N < 2) {
             // Cannot split fewer than 2 samples, so skip.
+            std::cout << "    cannot split less than 2 samples: " << std::endl;
             continue;
         }
 
@@ -92,7 +111,9 @@ bool Splitter::c45_split(Node* curr) {
             int lab = paired[k].second;
             parent_freq[lab] += 1;
         }
-        double parent_entropy = criterion_.entropy(parent_freq, N);
+        parent_entropy = criterion_.entropy(parent_freq, N);
+
+        std::cout << "Parent entropy: " << parent_entropy << std::endl;
 
         // If parent entropy is zero, that means all labels are identical; not a candidate for splitting
         if (parent_entropy <= 0.0) {
@@ -107,6 +128,7 @@ bool Splitter::c45_split(Node* curr) {
 
             // Only consider a threshold if the labels actually change between paired[j-1] and paired[j].
             if (paired[j-1].second == paired[j].second) {
+                std::cout << "      labels not flipping: " << j << std::endl;
                 continue;  // same label → no “information boundary” here
             }
 
@@ -114,6 +136,8 @@ bool Splitter::c45_split(Node* curr) {
             double v_left  = paired[j-1].first;
             double v_right = paired[j].first;
             double threshold = 0.5 * (v_left + v_right);
+
+            std::cout << "  trying threshold: " << threshold << std::endl;
 
             // ----------------------------------------------------
             // 4) Partition into left‐subset S_L (value <= threshold)
@@ -148,9 +172,11 @@ bool Splitter::c45_split(Node* curr) {
             // 5) Compute Information Gain:
             //       IG = H(parent) - (N_L/N)*H_left - (N_R/N)*H_right
             // --------------------------------------------------------
-            double wL = double(N_left) / double(N);
-            double wR = double(N_right) / double(N);
+            double wL = double(N_left) / double(N); // frac to the left
+            double wR = double(N_right) / double(N); // frac to the right
             double info_gain = parent_entropy - (wL * H_left + wR * H_right);
+
+            std::cout << "    info gain: " << info_gain << std::endl;
 
             // ------------------------------------------------------------------
             // 6) Compute Split Information:
@@ -171,6 +197,9 @@ bool Splitter::c45_split(Node* curr) {
             // 7) Compute Gain Ratio = IG / split_info
             // --------------------------------------------------------
             double gain_ratio = info_gain / split_info;
+
+            std::cout << "    gain ratio: " << gain_ratio << std::endl;
+
 
             // --------------------------------------------------------
             // 8) If this is the best we’ve seen so far, record it.
@@ -196,11 +225,12 @@ bool Splitter::c45_split(Node* curr) {
     curr->record_.variable1_ = best_feature;
     curr->record_.threshold  = best_threshold;
     curr->record_.gain_ratio = best_score;
+    curr->record_.entropy_   = parent_entropy;
     return true;
 }
 
 
-bool Splitter::pt_split(Node* curr) {
+bool Splitter::pt_search_split(Node* curr) {
     return false;
 }
 
@@ -226,12 +256,12 @@ bool Splitter::searchSplit(Node* curr, std::string split_mode) {
     // traditional decision tree, dt
     if (split_mode == "c45") {
         // then compare splits to a given threshold
-        return c45_split(curr);
+        return c45_search_split(curr);
     }
 
     if (split_mode == "pt") {
         // or grow a pairtree
-        return pt_split(curr);
+        return pt_search_split(curr);
     }
 
     // set in curr the best split, which vars are used
@@ -239,14 +269,77 @@ bool Splitter::searchSplit(Node* curr, std::string split_mode) {
 }
 
 
-void Splitter::split(Node* curr, Record* l_rec, Record* r_rec) { 
+
+void Splitter::c45_split(Node* curr, Record* l_rec, Record* r_rec){
 
     // read the curr node
+    Record curr_record = curr->record_;
+    int feature = curr_record.variable1_;
+    double threshold = curr_record.threshold;
+
+    // build the index to L and R
+
+    std::vector<std::pair<double, int>> paired;  // extracted data and label
+    extract_and_sort_data(feature, paired);    // sort by best
+    int N = static_cast<int>(paired.size());
+    // After this call, `paired[j].first` is the j-th smallest feature‐value,
+    // and `paired[j].second` is its corresponding class‐label.
+
+    std::vector<int> left_idx, right_idx; // index and label //
+    std::unordered_map<int,int> left_freq, right_freq;
+    int N_left = 0, N_right = 0;
+
+    // Simple loop over ALL N to count how many go left/right
+    for (int k = 0; k < N; ++k) {
+        double feat_val = paired[k].first;
+        int    lab      = paired[k].second;
+        if (feat_val <= threshold) {
+            left_idx.emplace_back( k );
+            left_freq[lab] += 1;
+            ++N_left;
+        } else {
+            right_idx.emplace_back( k );
+            right_freq[lab] += 1;
+            ++N_right;
+        }
+    }
+
+    double H_left  = criterion_.entropy(left_freq,  N_left);
+    double H_right = criterion_.entropy(right_freq, N_right);
 
     // and fill in the records for the left and right nodes
-
     // based on saved split info from search split
+    l_rec->n_samples_ = N_left;
+    l_rec->entropy_   = H_left;
+    l_rec->index_     = left_idx;
+    l_rec->threshold  = threshold;
+    l_rec->variable1_ = feature;
+    l_rec->variable2_ = -1;
+    l_rec->gain_ratio = 0.0;
+
+    r_rec->n_samples_ = N_left;
+    r_rec->entropy_   = H_left;
+    r_rec->index_     = left_idx;
+    r_rec->threshold  = threshold;
+    r_rec->variable1_ = feature;
+    r_rec->variable2_ = -1;
+    r_rec->gain_ratio = 0.0;
+
+    return;
 }
+
+
+
+void Splitter::split(Node* curr, Record* l_rec, Record* r_rec, std::string split_mode) { 
+
+    if (split_mode == "c45") {
+        // then compare splits to a given threshold
+        return c45_split(curr, l_rec, r_rec);
+    }
+
+
+}
+
 
 
 // Splitter::Splitter(const std::vector<std::vector<double>> *feature_data,

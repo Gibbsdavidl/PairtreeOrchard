@@ -135,10 +135,16 @@ void DecisionTreeClassifier::buildTree(
 
         //    if current criteria says to split
         if (splitter_.searchSplit(&curr_node, "c45") == true) {
+            // best split
+            std::cout << "best split found: " << std::endl;
+            std::cout << curr_node.record_.variable1_;
+            std::cout << curr_node.record_.threshold;
+            std::cout << curr_node.record_.gain_ratio;
+
             //    split node
             Record l_rec;
             Record r_rec;   // fills in the records
-            splitter_.split(&curr_node, &l_rec, &r_rec);
+            splitter_.split(&curr_node, &l_rec, &r_rec, "c45");
 
             // create root, left, and right nodes
             Node left = Node();

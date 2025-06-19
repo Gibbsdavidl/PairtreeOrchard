@@ -4,8 +4,9 @@
 #include <cmath>
 #include <iostream>
 #include <vector>
+#include <unordered_map>
 
-enum InformationMeasure { entropy, gini };
+enum InformationMeasure { ENTROPY, GINI };
 
 struct SampleData {
   int sample_number;
