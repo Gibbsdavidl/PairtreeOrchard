@@ -89,17 +89,18 @@ bool Splitter::c45_search_split(Node* curr) {
     std::iota(s_idx.begin(), s_idx.end(), 0);  // Fill with 0, 1, ..., (n_samples in idx)-1
 
     for (int i : f_idx) {
-        std::cout << "Feature index: " << i << std::endl;
+        std::cout << "  (C45) Feature index: " << i << std::endl;
 
         // 1) Build (value,label) pairs for feature i, then sort ascending by value.
         extract_and_sort_data(i, paired);
+        std::cout << "  (C45) data extracted and sorted" << std::endl;
         // After this call, `paired[j].first` is the j-th smallest feature‐value,
         // and `paired[j].second` is its corresponding class‐label.
 
         int N = static_cast<int>(paired.size());
         if (N < 2) {
             // Cannot split fewer than 2 samples, so skip.
-            std::cout << "    cannot split less than 2 samples: " << std::endl;
+            std::cout << "  (C45) cannot split less than 2 samples: " << std::endl;
             continue;
         }
 
@@ -113,7 +114,7 @@ bool Splitter::c45_search_split(Node* curr) {
         }
         parent_entropy = criterion_.entropy(parent_freq, N);
 
-        std::cout << "Parent entropy: " << parent_entropy << std::endl;
+        std::cout << "  (C45) Parent entropy: " << parent_entropy << std::endl;
 
         // If parent entropy is zero, that means all labels are identical; not a candidate for splitting
         if (parent_entropy <= 0.0) {
@@ -128,7 +129,7 @@ bool Splitter::c45_search_split(Node* curr) {
 
             // Only consider a threshold if the labels actually change between paired[j-1] and paired[j].
             if (paired[j-1].second == paired[j].second) {
-                std::cout << "      labels not flipping: " << j << std::endl;
+                std::cout << "  (C45) labels not flipping: " << j << std::endl;
                 continue;  // same label → no “information boundary” here
             }
 
@@ -137,7 +138,7 @@ bool Splitter::c45_search_split(Node* curr) {
             double v_right = paired[j].first;
             double threshold = 0.5 * (v_left + v_right);
 
-            std::cout << "  trying threshold: " << threshold << std::endl;
+            std::cout << "  (C45) trying threshold: " << threshold << std::endl;
 
             // ----------------------------------------------------
             // 4) Partition into left‐subset S_L (value <= threshold)
@@ -176,7 +177,7 @@ bool Splitter::c45_search_split(Node* curr) {
             double wR = double(N_right) / double(N); // frac to the right
             double info_gain = parent_entropy - (wL * H_left + wR * H_right);
 
-            std::cout << "    info gain: " << info_gain << std::endl;
+            std::cout << "  (C45) info gain: " << info_gain << std::endl;
 
             // ------------------------------------------------------------------
             // 6) Compute Split Information:
@@ -198,7 +199,7 @@ bool Splitter::c45_search_split(Node* curr) {
             // --------------------------------------------------------
             double gain_ratio = info_gain / split_info;
 
-            std::cout << "    gain ratio: " << gain_ratio << std::endl;
+            std::cout << "  (C45) gain ratio: " << gain_ratio << std::endl;
 
 
             // --------------------------------------------------------

@@ -35,7 +35,7 @@ del cl
 
 
 print("\n\ndecision tree test 5 - sim data ex 2")
-df = pd.read_csv('sim_data_ex2.csv')
+df = pd.read_csv('tests/sim_data_ex2.csv')
 # Features
 X = df[['A', 'B']].to_numpy()
 # Labels as integers (e.g., class1 → 0, class2 → 1)
