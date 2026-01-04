@@ -20,6 +20,10 @@ DecisionTreeClassifier::DecisionTreeClassifier() //:
 // criterion_(feature_data_, label_data_),  
 // splitter_(feature_data_, label_data_, criterion_)  
 {
+    // Retrieve the logger created during module import
+  logger_ = spdlog::get("pto");
+  logger_->info("DecisionTreeClassifier instance created.");
+
   max_features_ = 100;  // 
   min_samples_leaf_ = 3;      // when to stop splitting due to few samples
   max_depth_ = 8;             // maximum depth of the tree, when to stop
@@ -38,11 +42,16 @@ DecisionTreeClassifier::DecisionTreeClassifier(
   //   criterion_(feature_data_, label_data_),  
   //   splitter_(feature_data_, label_data_, criterion_)  
   {
+    // Retrieve the logger created during module import
+    logger_ = spdlog::get("pto");
+    logger_->info("DecisionTreeClassifier instance created.");
+
     max_depth_ = max_depth;
     min_samples_split_ = min_samples_split;
     min_samples_leaf_ = min_samples_leaf;
     max_features_ = max_features;
     min_label_entropy_ = min_label_entropy_;  
+
   }
 
 
@@ -71,16 +80,21 @@ void DecisionTreeClassifier::buildTree(
               const std::vector<std::vector<double>> feature_data,
               const std::vector<int> label_data) {
 
+
+    logger_->debug("Starting to build the tree with {} samples.", feature_data.size());
+
     // set the data
     label_data_ = label_data;
     feature_data_ = feature_data;
 
     // extract information about the data
     n_samples_ = label_data_.size();
-    n_features_ = feature_data.size();
+    if (!feature_data.empty()) {
+      n_features_ = feature_data[0].size();
+    }
 
     // initialize the building objects with references to data
-    Criterion criterion_ = Criterion(feature_data, label_data);
+    Criterion criterion(feature_data_, label_data_);
 
     // assert
     // length of one row of feature_data must equal n_samples_
@@ -92,7 +106,7 @@ void DecisionTreeClassifier::buildTree(
     // that labels have both 0s and 1s
 
     std::cout << "label length: " << n_samples_ << std::endl;
-    std::cout << "features rows: " << n_features_ << std::endl;
+    std::cout << "n_features_ : " << n_features_ << std::endl;
     std::cout << "features cols: " << feature_data_[0].size() << std::endl;
 
     // create root node, contains the root record
@@ -122,29 +136,42 @@ void DecisionTreeClassifier::buildTree(
         Node curr_node = Node();
         stack_.pop(curr_node);
 
-        std::cout << "popped, n_samples: " << curr_node.record_.n_samples_ << std::endl;
+        std::cout << "popped with n_samples: " << curr_node.record_.n_samples_ << std::endl;
+
+        // Add this log line!
+        logger_->debug("Processing Node ID: {}. Depth: {}. Samples: {}. Entropy: {}",
+             curr_node.self_id_,
+             curr_node.depth_,
+             curr_node.record_.n_samples_,
+             curr_node.record_.entropy_); // Assuming entropy is calculated
 
         // create a splitter object
-        Splitter splitter_ = Splitter(feature_data, label_data, 
-                                      criterion_, curr_node.record_.index_);
-        splitter_.setParams(max_depth_, 
+        //Splitter splitter_ = Splitter(feature_data, label_data, 
+        //                             criterion_, curr_node.record_.index_);
+
+        Splitter splitter(feature_data_, label_data_, criterion, curr_node.record_.index_);
+        splitter.setParams(max_depth_, 
                             min_samples_split_,
                             min_samples_leaf_,
                             max_features_,
                             min_label_entropy_);
 
         //    if current criteria says to split
-        if (splitter_.searchSplit(&curr_node, "c45") == true) {
+        if (splitter.searchSplit(&curr_node, "c45") == true) {
             // best split
             std::cout << "best split found: " << std::endl;
-            std::cout << curr_node.record_.variable1_;
-            std::cout << curr_node.record_.threshold;
-            std::cout << curr_node.record_.gain_ratio;
+            std::cout << "record.variable1_: " <<curr_node.record_.variable1_ << std::endl;
+            std::cout << "record. threshold: " << curr_node.record_.threshold << std::endl;
+            std::cout << "record.gain_ratio: " << curr_node.record_.gain_ratio << std::endl;
+            logger_->debug("Parent node {} split.", curr_node.self_id_);
+            // Use a helper to print the vector contents
+            logger_->debug("Left child gets indices: {}", fmt::join(l_rec.index_, ", "));
+            logger_->debug("Right child gets indices: {}", fmt::join(r_rec.index_, ", "));
 
             //    split node
             Record l_rec;
             Record r_rec;   // fills in the records
-            splitter_.split(&curr_node, &l_rec, &r_rec, "c45");
+            splitter.split(&curr_node, &l_rec, &r_rec, "c45");
 
             // create root, left, and right nodes
             Node left = Node();

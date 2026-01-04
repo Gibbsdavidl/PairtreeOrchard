@@ -71,6 +71,24 @@ double Criterion::entropy() {
 }
 
 
+double Criterion::calculateEntropy(const std::vector<int>& indices) {
+    std::unordered_map<int, int> counts;
+    int n_samples = indices.size();
+
+    if (n_samples == 0) {
+        return 0.0;
+    }
+
+    // Count the occurrences of each label for the given indices
+    for (int idx : indices) {
+        counts[label_data_[idx]]++;
+    }
+
+    // Call your existing entropy function to get the result
+    return entropy(counts, n_samples);
+}
+
+
 double Criterion::nodeInformation() {
   return impurity_fn_(label_freqs_total_, n_samples_);
   }

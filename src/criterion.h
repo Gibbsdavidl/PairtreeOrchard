@@ -43,6 +43,8 @@ class Criterion {
 
   double entropy();
 
+  double calculateEntropy(const std::vector<int>& indices); 
+
   double nodeInformation();
 
   void childrenInformation(double &impurity_left, double &impurity_right);

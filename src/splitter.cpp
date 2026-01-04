@@ -14,6 +14,9 @@ Splitter::Splitter(
         label_data_(label_data),
         criterion_(criterion),
         idx_(idx) {
+            // Retrieve the logger created during module import
+            logger_ = spdlog::get("pto");
+            logger_->debug("Splitter instance created.");
     }
 
 
@@ -25,17 +28,19 @@ void Splitter::setParams(int max_depth,
     int min_samples_split, 
     int min_samples_leaf,
     int max_features,
-    double min_impurity_split) {
+    double min_label_entropy) {
         max_depth_=max_depth;
+        min_samples_split_ = min_samples_split;
         min_samples_leaf_=min_samples_leaf;
         max_features_=max_features;
+        min_label_entropy_ = min_label_entropy; 
         n_samples_total_=feature_data_.size();
         n_features_=feature_data_[0].size();
     }
 
 void Splitter::extract_and_sort_data(
     int feature_index,
-    std::vector<std::pair<double, int>> paired)
+    std::vector<std::pair<double, int>> &paired)
 {
     // clear out the paired object...
     paired.clear();
@@ -57,7 +62,7 @@ void Splitter::extract_and_sort_data(
 
 void Splitter::extract_data(
     int feature_index,
-    std::vector<std::pair<double, int>> paired)
+    std::vector<std::pair<double, int>> &paired)
 {
     // clear out the paired object...
     paired.clear();
@@ -73,7 +78,7 @@ void Splitter::extract_data(
 
 bool Splitter::c45_search_split(Node* curr) {
 
-    std::cout << "in c45 split" << std::endl;
+    std::cout << "Starting C4.5 split search for a node with {} samples. " << idx_.size() << std::endl;
 
     int best_feature = -1;
     double best_threshold = 0.0;
@@ -238,20 +243,31 @@ bool Splitter::pt_search_split(Node* curr) {
 
 bool Splitter::searchSplit(Node* curr, std::string split_mode) {
 
-    std::cout << "in search split" << std::endl;
+    std::cout << "in searchSplit" << std::endl;
 
     // check if we should split or whether it's a leaf.
 
     // IDEA: instead of a paired comparison,
     // make the pair-partner a threshold T, then
     // it's like a traditional decision tree?
+
+    // 1. Calculate the REAL entropy first
+    double current_entropy = criterion_.calculateEntropy(curr->record_.index_);
+    
+    // 2. Update the node's record
+    curr->record_.entropy_ = current_entropy;
+
+
     if (curr->record_.n_samples_ < min_samples_split_) {
+        logger_->debug("n_samples {} less than min_samples_split: {}.", curr->record_.n_samples_, min_samples_split_);
         return false;
     }
     if (curr->record_.entropy_ < min_label_entropy_) {
+        logger_->debug("entropy {} less than min_label_entropy: {}.", curr->record_.entropy_, min_label_entropy_);
         return false;
     }
     if (curr->depth_ >= max_depth_) {
+        logger_->debug("depth {} gt than max_depth_: {}.", curr->depth_, max_depth_);
         return false;
     }
     // traditional decision tree, dt
