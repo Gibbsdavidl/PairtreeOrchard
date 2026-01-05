@@ -2,6 +2,7 @@
 #include "splitter.h"
 #include <iostream>
 #include <vector>
+#include <spdlog/fmt/bundled/ranges.h>
 
 
 // DT Classifier definitions //
@@ -145,10 +146,6 @@ void DecisionTreeClassifier::buildTree(
              curr_node.record_.n_samples_,
              curr_node.record_.entropy_); // Assuming entropy is calculated
 
-        // create a splitter object
-        //Splitter splitter_ = Splitter(feature_data, label_data, 
-        //                             criterion_, curr_node.record_.index_);
-
         Splitter splitter(feature_data_, label_data_, criterion, curr_node.record_.index_);
         splitter.setParams(max_depth_, 
                             min_samples_split_,
@@ -164,28 +161,26 @@ void DecisionTreeClassifier::buildTree(
             std::cout << "record. threshold: " << curr_node.record_.threshold << std::endl;
             std::cout << "record.gain_ratio: " << curr_node.record_.gain_ratio << std::endl;
             logger_->debug("Parent node {} split.", curr_node.self_id_);
-            // Use a helper to print the vector contents
-            logger_->debug("Left child gets indices: {}", fmt::join(l_rec.index_, ", "));
-            logger_->debug("Right child gets indices: {}", fmt::join(r_rec.index_, ", "));
 
             //    split node
             Record l_rec;
             Record r_rec;   // fills in the records
             splitter.split(&curr_node, &l_rec, &r_rec, "c45");
 
+            // Use a helper to print the vector contents
+            logger_->debug("Left child gets indices: {}", fmt::join(l_rec.index_, ", "));
+            logger_->debug("Right child gets indices: {}", fmt::join(r_rec.index_, ", "));
+
             // create root, left, and right nodes
             Node left = Node();
             Node right = Node();
             
             // add nodes to the tree
-            tree_.createNodes(parent_node, left, right, l_rec, r_rec);
+            tree_.createNodes(curr_node, left, right, l_rec, r_rec);
 
             //    push L and R to stack
             stack_.push(left);
             stack_.push(right);
-
-            tree_.addNode(left);
-            tree_.addNode(right);
 
             node_index += 2;
         } else {
@@ -193,10 +188,8 @@ void DecisionTreeClassifier::buildTree(
             // Node leaf_node = Node();
             // curr_mode = 'leaf';
             //tree_.create_node(leaf_node, curr_node, curr_mode);
-            // set node to leaf
-            tree_.addNode(curr_node);
-            // make the node a leaf, it shouldn't be split
-
+            // set node to leaf, it shouldn't be split
+            // Note: leaf nodes are already added to the tree in createNodes
         }
     }
     //    end while

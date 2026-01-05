@@ -70,7 +70,7 @@ class Splitter {
 
     void split(Node* curr, Record* l_rec, Record* r_rec, std::string split_mode); 
 
-    void extract_and_sort_data(int feature_j, std::vector<std::pair<double, int>> &paired);
+    void extract_and_sort_data(int feature_j, std::vector<std::tuple<double, int, int>> &paired);
     void extract_data(int feature_j, std::vector<std::pair<double, int>> &paired);
 
     bool c45_search_split(Node* curr);

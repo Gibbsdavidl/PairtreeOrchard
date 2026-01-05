@@ -80,30 +80,30 @@ void DecisionTree::createNodes(Node& parent, Node& left, Node& right,
     left.parent_id_ = parent.self_id_;
     left.is_left_ = true;
     left.record_ = l_rec;
+    left.left_child_id_ = -1;  // Initialize child IDs before adding
+    left.right_child_id_ = -1;
     // Determine if the child is a leaf node
     left.is_leaf_ = (l_rec.index_.size() == 0 || l_rec.entropy_ == 0.0);
     // Add child to the tree and get its ID
     left.self_id_ = addNode(left);
-    left.left_child_id_ = -1;
-    left.right_child_id_ = -1;
 
     // Set up the right child node
     right.depth_ = parent.depth_ + 1;
     right.parent_id_ = parent.self_id_;
     right.is_left_ = false;
     right.record_ = r_rec;
+    right.left_child_id_ = -1;  // Initialize child IDs before adding
+    right.right_child_id_ = -1;
     // Determine if the child is a leaf node
     right.is_leaf_ = (r_rec.index_.size() == 0 || r_rec.entropy_ == 0.0);
     // Add child to the tree and get its ID
     right.self_id_ = addNode(right);
-    right.left_child_id_ = -1;
-    right.right_child_id_ = -1;
 
-    // Link the parent node to its new children
-    parent.left_child_id_ = left.self_id_;
-    parent.right_child_id_ = right.self_id_;
+    // Link the parent node to its new children in the nodes_ vector
+    nodes_[parent.self_id_].left_child_id_ = left.self_id_;
+    nodes_[parent.self_id_].right_child_id_ = right.self_id_;
     // The parent is no longer a leaf
-    parent.is_leaf_ = false;
+    nodes_[parent.self_id_].is_leaf_ = false;
   }
 
 
