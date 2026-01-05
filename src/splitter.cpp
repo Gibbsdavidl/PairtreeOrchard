@@ -22,7 +22,7 @@ Splitter::Splitter(
 
 
 void Splitter::print() {
-    std::cout << "Splitter: " << n_samples_total_ << std::endl;
+    logger_->debug("Splitter: {}", n_samples_total_);
  }
 
 void Splitter::setParams(int max_depth,
@@ -79,7 +79,7 @@ void Splitter::extract_data(
 
 bool Splitter::c45_search_split(Node* curr) {
 
-    std::cout << "Starting C4.5 split search for a node with {} samples. " << idx_.size() << std::endl;
+    logger_->debug("Starting C4.5 split search for a node with {} samples.", idx_.size());
 
     int best_feature = -1;
     double best_threshold = 0.0;
@@ -95,11 +95,11 @@ bool Splitter::c45_search_split(Node* curr) {
     std::iota(s_idx.begin(), s_idx.end(), 0);  // Fill with 0, 1, ..., (n_samples in idx)-1
 
     for (int i : f_idx) {
-        std::cout << "  (C45) Feature index: " << i << std::endl;
+        logger_->debug("  (C45) Feature index: {}", i);
 
         // 1) Build (value,label) pairs for feature i, then sort ascending by value.
         extract_and_sort_data(i, paired);
-        std::cout << "  (C45) data extracted and sorted" << std::endl;
+        logger_->debug("  (C45) data extracted and sorted");
         // After this call, `std::get<0>(paired[j])` is the j-th smallest feature‐value,
         // `std::get<1>(paired[j])` is its corresponding class‐label,
         // `std::get<2>(paired[j])` is its original row index.
@@ -107,7 +107,7 @@ bool Splitter::c45_search_split(Node* curr) {
         int N = static_cast<int>(paired.size());
         if (N < 2) {
             // Cannot split fewer than 2 samples, so skip.
-            std::cout << "  (C45) cannot split less than 2 samples: " << std::endl;
+            logger_->debug("  (C45) cannot split less than 2 samples");
             continue;
         }
 
@@ -120,7 +120,7 @@ bool Splitter::c45_search_split(Node* curr) {
         }
         parent_entropy = criterion_.entropy(parent_freq, N);
 
-        std::cout << "  (C45) Parent entropy: " << parent_entropy << std::endl;
+        logger_->debug("  (C45) Parent entropy: {}", parent_entropy);
 
         // If parent entropy is zero, that means all labels are identical; not a candidate for splitting
         if (parent_entropy <= 0.0) {
@@ -135,7 +135,7 @@ bool Splitter::c45_search_split(Node* curr) {
 
             // Only consider a threshold if the labels actually change between paired[j-1] and paired[j].
             if (std::get<1>(paired[j-1]) == std::get<1>(paired[j])) {
-                std::cout << "  (C45) labels not flipping: " << j << std::endl;
+                logger_->debug("  (C45) labels not flipping: {}", j);
                 continue;  // same label → no "information boundary" here
             }
 
@@ -144,7 +144,7 @@ bool Splitter::c45_search_split(Node* curr) {
             double v_right = std::get<0>(paired[j]);
             double threshold = 0.5 * (v_left + v_right);
 
-            std::cout << "  (C45) trying threshold: " << threshold << std::endl;
+            logger_->debug("  (C45) trying threshold: {}", threshold);
 
             // ----------------------------------------------------
             // 4) Partition into left‐subset S_L (value <= threshold)
@@ -183,7 +183,7 @@ bool Splitter::c45_search_split(Node* curr) {
             double wR = double(N_right) / double(N); // frac to the right
             double info_gain = parent_entropy - (wL * H_left + wR * H_right);
 
-            std::cout << "  (C45) info gain: " << info_gain << std::endl;
+            logger_->debug("  (C45) info gain: {}", info_gain);
 
             // ------------------------------------------------------------------
             // 6) Compute Split Information:
@@ -205,7 +205,7 @@ bool Splitter::c45_search_split(Node* curr) {
             // --------------------------------------------------------
             double gain_ratio = info_gain / split_info;
 
-            std::cout << "  (C45) gain ratio: " << gain_ratio << std::endl;
+            logger_->debug("  (C45) gain ratio: {}", gain_ratio);
 
 
             // --------------------------------------------------------
@@ -244,7 +244,7 @@ bool Splitter::pt_search_split(Node* curr) {
 
 bool Splitter::searchSplit(Node* curr, std::string split_mode) {
 
-    std::cout << "in searchSplit" << std::endl;
+    logger_->debug("in searchSplit");
 
     // check if we should split or whether it's a leaf.
 

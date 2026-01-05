@@ -125,7 +125,7 @@ void DecisionTree::printTree() {
         "Decision tree must be built before it can be printed.");
   }
   for (std::size_t i = 0; i < nodes_.size(); i++) {
-    std::cout << "=============================" << std::endl;
+    std::cout << "=============================" << std::endl << std::endl;
     std::cout << "node id: " << i << std::endl;
     nodes_[i].printNode();
   }

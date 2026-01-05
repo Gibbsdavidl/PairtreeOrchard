@@ -83,7 +83,10 @@
         "cinttypes": "cpp",
         "typeindex": "cpp",
         "valarray": "cpp",
-        "variant": "cpp"
+        "variant": "cpp",
+        "bitset": "cpp",
+        "expected": "cpp",
+        "source_location": "cpp"
     },
     "cmake.sourceDirectory": "/home/daveg/Code/PairtreeOrchard/trash"
 }

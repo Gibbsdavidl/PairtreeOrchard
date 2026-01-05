@@ -57,9 +57,9 @@ DecisionTreeClassifier::DecisionTreeClassifier(
 
 
 void DecisionTreeClassifier::print() { 
-  std::cout << "\nDT Classifier" << std::endl;
-  std::cout << "Max Depth: " << max_depth_ << std::endl;
-  std::cout << "Decision Tree:" << std::endl;
+  logger_->debug("DT Classifier");
+  logger_->debug("Max Depth: {}", max_depth_);
+  logger_->debug("Decision Tree:");
   tree_.printTree(); 
 }
 
@@ -106,9 +106,9 @@ void DecisionTreeClassifier::buildTree(
     // check
     // that labels have both 0s and 1s
 
-    std::cout << "label length: " << n_samples_ << std::endl;
-    std::cout << "n_features_ : " << n_features_ << std::endl;
-    std::cout << "features cols: " << feature_data_[0].size() << std::endl;
+    logger_->debug("label length: {}", n_samples_);
+    logger_->debug("n_features_: {}", n_features_);
+    logger_->debug("features cols: {}", feature_data_[0].size());
 
     // create root node, contains the root record
     Record curr_record = initRecord(n_samples_);
@@ -131,13 +131,13 @@ void DecisionTreeClassifier::buildTree(
   
         node_counter++;
 
-        std::cout << "stack size: " << stack_.stack_.size() << std::endl;
+        logger_->debug("stack size: {}", stack_.stack_.size());
 
         //    pop to current
         Node curr_node = Node();
         stack_.pop(curr_node);
 
-        std::cout << "popped with n_samples: " << curr_node.record_.n_samples_ << std::endl;
+        logger_->debug("popped with n_samples: {}", curr_node.record_.n_samples_);
 
         // Add this log line!
         logger_->debug("Processing Node ID: {}. Depth: {}. Samples: {}. Entropy: {}",
@@ -156,10 +156,10 @@ void DecisionTreeClassifier::buildTree(
         //    if current criteria says to split
         if (splitter.searchSplit(&curr_node, "c45") == true) {
             // best split
-            std::cout << "best split found: " << std::endl;
-            std::cout << "record.variable1_: " <<curr_node.record_.variable1_ << std::endl;
-            std::cout << "record. threshold: " << curr_node.record_.threshold << std::endl;
-            std::cout << "record.gain_ratio: " << curr_node.record_.gain_ratio << std::endl;
+            logger_->debug("best split found");
+            logger_->debug("record.variable1_: {}", curr_node.record_.variable1_);
+            logger_->debug("record. threshold: {}", curr_node.record_.threshold);
+            logger_->debug("record.gain_ratio: {}", curr_node.record_.gain_ratio);
             logger_->debug("Parent node {} split.", curr_node.self_id_);
 
             //    split node
